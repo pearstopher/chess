@@ -67,7 +67,6 @@ def draw_pieces(screen, board, font, selected_piece):
                 # s2 = font.render(piece_type[0], True, pygame.Color('darkgrey'))
                 s1 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
                 s2 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
-                s2.set_alpha(127)
                 pos = pygame.Rect(BOARD_POS[0] + x*TILE_SIZE + 1, BOARD_POS[1] + y*TILE_SIZE + 1, TILE_SIZE, TILE_SIZE)
                 # screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
                 # screen.blit(s1, s1.get_rect(center=pos.center))
@@ -90,8 +89,11 @@ def draw_drag(screen, board, selected_piece, font):
             pygame.draw.rect(screen, (0, 255, 0, 50), rect, 2)
 
         color, piece_type = selected_piece[0]
-        s1 = font.render(piece_type[0], True, pygame.Color(color))
-        s2 = font.render(piece_type[0], True, pygame.Color('darkgrey'))
+        # s1 = font.render(piece_type[0], True, pygame.Color(color))
+        # s2 = font.render(piece_type[0], True, pygame.Color('darkgrey'))
+        s1 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
+        s2 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
+
         pos = pygame.Vector2(pygame.mouse.get_pos())
         # screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
         screen.blit(s2, s2.get_rect(center=pos + pygame.Vector2((1, 1))))

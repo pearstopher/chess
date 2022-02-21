@@ -24,13 +24,18 @@ def create_board_surface():
         dark = not dark
     return board_surface
 
+
 def get_square_under_mouse(board):
-    mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - BOARD_POS
+    # mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - BOARD_POS
+    mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(BOARD_POS)
     x, y = [int(v // TILE_SIZE) for v in mouse_pos]
     try:
-        if x >= 0 and y >= 0: return (board[y][x], x, y)
-    except IndexError: pass
+        if x >= 0 and y >= 0:
+            return board[y][x], x, y
+    except IndexError:
+        pass
     return None, None, None
+
 
 def create_board():
     board = []
@@ -46,6 +51,7 @@ def create_board():
 
     return board
 
+
 def draw_pieces(screen, board, font, selected_piece):
     sx, sy = None, None
     if selected_piece:
@@ -56,34 +62,39 @@ def draw_pieces(screen, board, font, selected_piece):
             piece = board[y][x]
             if piece:
                 selected = x == sx and y == sy
-                color, type = piece
-                s1 = font.render(type[0], True, pygame.Color('red' if selected else color))
-                s2 = font.render(type[0], True, pygame.Color('darkgrey'))
-                pos = pygame.Rect(BOARD_POS[0] + x * TILE_SIZE+1, BOARD_POS[1] + y * TILE_SIZE + 1, TILE_SIZE, TILE_SIZE)
+                color, piece_type = piece
+                s1 = font.render(piece_type[0], True, pygame.Color('red' if selected else color))
+                s2 = font.render(piece_type[0], True, pygame.Color('darkgrey'))
+                pos = pygame.Rect(BOARD_POS[0] + x*TILE_SIZE + 1, BOARD_POS[1] + y*TILE_SIZE + 1, TILE_SIZE, TILE_SIZE)
                 screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
                 screen.blit(s1, s1.get_rect(center=pos.center))
 
+
 def draw_selector(screen, piece, x, y):
-    if piece != None:
+    if piece is not None:
         rect = (BOARD_POS[0] + x * TILE_SIZE, BOARD_POS[1] + y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
         pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)
+
 
 def draw_drag(screen, board, selected_piece, font):
     if selected_piece:
         piece, x, y = get_square_under_mouse(board)
-        if x != None:
+        if x is not None:
             rect = (BOARD_POS[0] + x * TILE_SIZE, BOARD_POS[1] + y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
             pygame.draw.rect(screen, (0, 255, 0, 50), rect, 2)
 
-        color, type = selected_piece[0]
-        s1 = font.render(type[0], True, pygame.Color(color))
-        s2 = font.render(type[0], True, pygame.Color('darkgrey'))
+        color, piece_type = selected_piece[0]
+        s1 = font.render(piece_type[0], True, pygame.Color(color))
+        s2 = font.render(piece_type[0], True, pygame.Color('darkgrey'))
         pos = pygame.Vector2(pygame.mouse.get_pos())
-        screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
+        # screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
+        screen.blit(s2, s2.get_rect(center=pos + pygame.Vector2((1, 1))))
         screen.blit(s1, s1.get_rect(center=pos))
-        selected_rect = pygame.Rect(BOARD_POS[0] + selected_piece[1] * TILE_SIZE, BOARD_POS[1] + selected_piece[2] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
+        selected_rect = pygame.Rect(BOARD_POS[0] + selected_piece[1] * TILE_SIZE, BOARD_POS[1] +
+                                    selected_piece[2] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
         pygame.draw.line(screen, pygame.Color('red'), selected_rect.center, pos)
-        return (x, y)
+        return x, y
+
 
 def main():
     pygame.init()
@@ -103,12 +114,13 @@ def main():
             if e.type == pygame.QUIT:
                 return
             if e.type == pygame.MOUSEBUTTONDOWN:
-                if piece != None:
+                if piece is not None:
                     selected_piece = piece, x, y
             if e.type == pygame.MOUSEBUTTONUP:
                 if drop_pos:
                     piece, old_x, old_y = selected_piece
-                    board[old_y][old_x] = 0
+                    # board[old_y][old_x] = 0
+                    board[int(old_y)][old_x] = 0
                     new_x, new_y = drop_pos
                     board[new_y][new_x] = piece
                 selected_piece = None

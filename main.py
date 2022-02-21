@@ -10,6 +10,12 @@ TILE_SIZE = 64
 BORDER = 10
 INFO_HEIGHT = 100  # informational window below board
 BOARD_POS = (BORDER, BORDER)
+COLOR_DARK = (181, 136, 99)
+COLOR_LIGHT = (240, 217, 181)
+COLOR_BG = (22, 21, 18)
+COLOR_DRAW_LINE = (22, 21, 18)
+COLOR_DRAW_SELECT = (255, 0, 0, 50)
+COLOR_DRAW_DRAG = (0, 255, 0, 50)
 
 
 # create the board surface by drawing the tiles
@@ -19,7 +25,7 @@ def create_board_surface():
     for y in range(8):
         for x in range(8):
             rect = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
-            pygame.draw.rect(board_surface, pygame.Color((181, 136, 99) if dark else (240, 217, 181)), rect)
+            pygame.draw.rect(board_surface, pygame.Color(COLOR_DARK if dark else COLOR_LIGHT), rect)
             dark = not dark
         dark = not dark
     return board_surface
@@ -101,11 +107,10 @@ def draw_pieces(screen, board, font, selected_piece):
                 screen.blit(s1, s1.get_rect(center=pos.center))
 
 
-
 def draw_selector(screen, piece, x, y):
     if piece is not None:
         rect = (BOARD_POS[0] + x * TILE_SIZE, BOARD_POS[1] + y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-        pygame.draw.rect(screen, (255, 0, 0, 50), rect, 2)
+        pygame.draw.rect(screen, COLOR_DRAW_SELECT, rect, 2)
 
 
 def draw_drag(screen, board, selected_piece, font):
@@ -113,7 +118,7 @@ def draw_drag(screen, board, selected_piece, font):
         piece, x, y = get_square_under_mouse(board)
         if x is not None:
             rect = (BOARD_POS[0] + x * TILE_SIZE, BOARD_POS[1] + y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-            pygame.draw.rect(screen, (0, 255, 0, 50), rect, 2)
+            pygame.draw.rect(screen, COLOR_DRAW_DRAG, rect, 2)
 
         color, piece_type = selected_piece[0]
         # s1 = font.render(piece_type[0], True, pygame.Color(color))
@@ -127,7 +132,7 @@ def draw_drag(screen, board, selected_piece, font):
         screen.blit(s1, s1.get_rect(center=pos))
         selected_rect = pygame.Rect(BOARD_POS[0] + selected_piece[1] * TILE_SIZE, BOARD_POS[1] +
                                     selected_piece[2] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-        pygame.draw.line(screen, pygame.Color('red'), selected_rect.center, pos)
+        pygame.draw.line(screen, pygame.Color(COLOR_DRAW_LINE), selected_rect.center, pos, 2)
         return x, y
 
 
@@ -162,7 +167,7 @@ def main():
                 selected_piece = None
                 drop_pos = None
 
-        screen.fill(pygame.Color(22, 21, 18))
+        screen.fill(pygame.Color(COLOR_BG))
         screen.blit(board_surface, BOARD_POS)
         draw_pieces(screen, board, font, selected_piece)
         draw_selector(screen, piece, x, y)

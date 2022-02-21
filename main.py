@@ -14,8 +14,8 @@ COLOR_DARK = (181, 136, 99)
 COLOR_LIGHT = (240, 217, 181)
 COLOR_BG = (22, 21, 18)
 COLOR_DRAW_LINE = (22, 21, 18)
-COLOR_DRAW_SELECT = (255, 0, 0, 50)
-COLOR_DRAW_DRAG = (0, 255, 0, 50)
+COLOR_DRAW_SELECT = (220, 10, 0, 50)
+COLOR_DRAW_DRAG = (0, 220, 0, 50)
 
 
 # create the board surface by drawing the tiles
@@ -110,7 +110,7 @@ def draw_pieces(screen, board, font, selected_piece):
 def draw_selector(screen, piece, x, y):
     if piece is not None:
         rect = (BOARD_POS[0] + x * TILE_SIZE, BOARD_POS[1] + y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-        pygame.draw.rect(screen, COLOR_DRAW_SELECT, rect, 2)
+        pygame.draw.rect(screen, COLOR_DRAW_SELECT, rect, 3)
 
 
 def draw_drag(screen, board, selected_piece, font):
@@ -118,7 +118,7 @@ def draw_drag(screen, board, selected_piece, font):
         piece, x, y = get_square_under_mouse(board)
         if x is not None:
             rect = (BOARD_POS[0] + x * TILE_SIZE, BOARD_POS[1] + y * TILE_SIZE, TILE_SIZE, TILE_SIZE)
-            pygame.draw.rect(screen, COLOR_DRAW_DRAG, rect, 2)
+            pygame.draw.rect(screen, COLOR_DRAW_DRAG, rect, 3)
 
         color, piece_type = selected_piece[0]
         # s1 = font.render(piece_type[0], True, pygame.Color(color))

@@ -114,7 +114,7 @@ def main():
                 selected_piece = None
                 drop_pos = None
 
-        screen.fill(pygame.Color('grey'))
+        screen.fill(pygame.Color(22, 21, 18))
         screen.blit(board_surface, BOARD_POS)
         draw_pieces(screen, board, font, selected_piece)
         draw_selector(screen, piece, x, y)

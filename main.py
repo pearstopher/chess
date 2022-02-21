@@ -38,16 +38,43 @@ def get_square_under_mouse(board):
 
 
 def create_board():
+    # what I really need to do is create a board from a chess object
+    # but for now I am not even importing that library, just setting up standard board configuration
     board = []
     for y in range(8):
         board.append([])
         for x in range(8):
             board[y].append(None)
 
+    # pawns
     for x in range(0, 8):
         board[1][x] = ('black', 'pawn')
     for x in range(0, 8):
         board[6][x] = ('white', 'pawn')
+
+    # rooks
+    board[0][0] = ('black', 'rook')
+    board[0][7] = ('black', 'rook')
+    board[7][0] = ('white', 'rook')
+    board[7][7] = ('white', 'rook')
+
+    # knights
+    board[0][1] = ('black', 'knight')
+    board[0][6] = ('black', 'knight')
+    board[7][1] = ('white', 'knight')
+    board[7][6] = ('white', 'knight')
+
+    # bishops
+    board[0][2] = ('black', 'bishop')
+    board[0][5] = ('black', 'bishop')
+    board[7][2] = ('white', 'bishop')
+    board[7][5] = ('white', 'bishop')
+
+    # kings & queens
+    board[0][4] = ('black', 'king')
+    board[0][3] = ('black', 'queen')
+    board[7][4] = ('white', 'king')
+    board[7][3] = ('white', 'queen')
 
     return board
 

@@ -15,7 +15,8 @@ def create_board_surf():
     for y in range(8):
         for x in range(8):
             rect = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
-            pygame.draw.rect(board_surf, pygame.Color('darkgrey' if dark else 'beige'), rect)
+            # pygame.draw.rect(board_surf, pygame.Color('darkgrey' if dark else 'beige'), rect)
+            pygame.draw.rect(board_surf, pygame.Color((181, 136, 99) if dark else (240, 217, 181)), rect)
             dark = not dark
         dark = not dark
     return board_surf

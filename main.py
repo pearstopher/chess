@@ -4,22 +4,25 @@
 
 import pygame
 
+
+# constants and configuration
 TILE_SIZE = 64
 BORDER = 10
 INFO_HEIGHT = 100  # informational window below board
 BOARD_POS = (BORDER, BORDER)
 
-def create_board_surf():
-    board_surf = pygame.Surface((TILE_SIZE*8, TILE_SIZE*8))
+
+# create the board surface by drawing the tiles
+def create_board_surface():
+    board_surface = pygame.Surface((TILE_SIZE*8, TILE_SIZE*8))
     dark = False
     for y in range(8):
         for x in range(8):
             rect = pygame.Rect(x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE)
-            # pygame.draw.rect(board_surf, pygame.Color('darkgrey' if dark else 'beige'), rect)
-            pygame.draw.rect(board_surf, pygame.Color((181, 136, 99) if dark else (240, 217, 181)), rect)
+            pygame.draw.rect(board_surface, pygame.Color((181, 136, 99) if dark else (240, 217, 181)), rect)
             dark = not dark
         dark = not dark
-    return board_surf
+    return board_surface
 
 def get_square_under_mouse(board):
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - BOARD_POS
@@ -89,7 +92,7 @@ def main():
     h = w + INFO_HEIGHT
     screen = pygame.display.set_mode((w, h))
     board = create_board()
-    board_surf = create_board_surf()
+    board_surface = create_board_surface()
     clock = pygame.time.Clock()
     selected_piece = None
     drop_pos = None
@@ -112,7 +115,7 @@ def main():
                 drop_pos = None
 
         screen.fill(pygame.Color('grey'))
-        screen.blit(board_surf, BOARD_POS)
+        screen.blit(board_surface, BOARD_POS)
         draw_pieces(screen, board, font, selected_piece)
         draw_selector(screen, piece, x, y)
         drop_pos = draw_drag(screen, board, selected_piece, font)

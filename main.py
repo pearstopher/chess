@@ -99,6 +99,7 @@ def draw_drag(screen, board, selected_piece, font):
 def main():
     pygame.init()
     font = pygame.font.SysFont('', 32)
+    pygame.display.set_caption("Chess Board")
     w = TILE_SIZE*8 + BORDER*2  # width of window
     h = w + INFO_HEIGHT
     screen = pygame.display.set_mode((w, h))

@@ -33,7 +33,6 @@ def create_board_surface():
 
 
 def get_square_under_mouse(board):
-    # mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - BOARD_POS
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos()) - pygame.Vector2(BOARD_POS)
     x, y = [int(v // TILE_SIZE) for v in mouse_pos]
     try:
@@ -42,48 +41,6 @@ def get_square_under_mouse(board):
     except IndexError:
         pass
     return None, None, None
-
-
-def create_board():
-    # what I really need to do is create a board from a chess object
-    # but for now I am not even importing that library, just setting up standard board configuration
-    board = []
-    for y in range(8):
-        board.append([])
-        for x in range(8):
-            board[y].append(None)
-
-    # pawns
-    for x in range(0, 8):
-        board[1][x] = ('black', 'pawn')
-    for x in range(0, 8):
-        board[6][x] = ('white', 'pawn')
-
-    # rooks
-    board[0][0] = ('black', 'rook')
-    board[0][7] = ('black', 'rook')
-    board[7][0] = ('white', 'rook')
-    board[7][7] = ('white', 'rook')
-
-    # knights
-    board[0][1] = ('black', 'knight')
-    board[0][6] = ('black', 'knight')
-    board[7][1] = ('white', 'knight')
-    board[7][6] = ('white', 'knight')
-
-    # bishops
-    board[0][2] = ('black', 'bishop')
-    board[0][5] = ('black', 'bishop')
-    board[7][2] = ('white', 'bishop')
-    board[7][5] = ('white', 'bishop')
-
-    # kings & queens
-    board[0][4] = ('black', 'king')
-    board[0][3] = ('black', 'queen')
-    board[7][4] = ('white', 'king')
-    board[7][3] = ('white', 'queen')
-
-    return board
 
 
 def create_board_from_fen(fen):
@@ -144,13 +101,9 @@ def draw_pieces(screen, board, font, selected_piece):
             if piece:
                 selected = x == sx and y == sy
                 color, piece_type = piece
-                # s1 = font.render(piece_type[0], True, pygame.Color('red' if selected else color))
-                # s2 = font.render(piece_type[0], True, pygame.Color('darkgrey'))
                 s1 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
                 s2 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
                 pos = pygame.Rect(BOARD_POS[0] + x*TILE_SIZE + 1, BOARD_POS[1] + y*TILE_SIZE + 1, TILE_SIZE, TILE_SIZE)
-                # screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
-                # screen.blit(s1, s1.get_rect(center=pos.center))
                 screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
                 screen.blit(s1, s1.get_rect(center=pos.center))
 
@@ -169,13 +122,10 @@ def draw_drag(screen, board, selected_piece, font):
             pygame.draw.rect(screen, COLOR_DRAW_DRAG, rect, 3)
 
         color, piece_type = selected_piece[0]
-        # s1 = font.render(piece_type[0], True, pygame.Color(color))
-        # s2 = font.render(piece_type[0], True, pygame.Color('darkgrey'))
         s1 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
         s2 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
 
         pos = pygame.Vector2(pygame.mouse.get_pos())
-        # screen.blit(s2, s2.get_rect(center=pos + (1, 1)))
         screen.blit(s2, s2.get_rect(center=pos + pygame.Vector2((1, 1))))
         screen.blit(s1, s1.get_rect(center=pos))
         selected_rect = pygame.Rect(BOARD_POS[0] + selected_piece[1] * TILE_SIZE, BOARD_POS[1] +
@@ -192,7 +142,6 @@ def main():
     h = w + INFO_HEIGHT
     screen = pygame.display.set_mode((w, h))
 
-    # board = create_board()
     chessboard = chess.Board()
     board = create_board_from_fen(chessboard.board_fen())
 
@@ -212,8 +161,6 @@ def main():
             if e.type == pygame.MOUSEBUTTONUP:
                 if drop_pos:
                     piece, old_x, old_y = selected_piece
-                    # board[old_y][old_x] = 0
-                    # board[int(old_y)][old_x] = 0
                     board[int(old_y)][old_x] = None
                     new_x, new_y = drop_pos
                     board[new_y][new_x] = piece

@@ -99,10 +99,10 @@ def create_board_from_fen(fen):
             col = col + 1
             row = 0
         elif f in ('1', '2', '3', '4', '5', '6', '7', '8'):
-            rank = row + int(f)
+            row = row + int(f)
         elif f in ('K', 'k', 'Q', 'q', 'R', 'r', 'N', 'n', 'B', 'b', 'P', 'p'):
-            board[row][col] = get_piece(f)
-            rank = row + 1
+            board[col][row] = get_piece(f)
+            row = row + 1
     return board
 
 
@@ -191,7 +191,11 @@ def main():
     w = TILE_SIZE*8 + BORDER*2  # width of window
     h = w + INFO_HEIGHT
     screen = pygame.display.set_mode((w, h))
-    board = create_board()
+
+    # board = create_board()
+    chessboard = chess.Board()
+    board = create_board_from_fen(chessboard.board_fen())
+
     board_surface = create_board_surface()
     clock = pygame.time.Clock()
     selected_piece = None

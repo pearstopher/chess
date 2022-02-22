@@ -103,6 +103,9 @@ def draw_pieces(screen, board, font, selected_piece):
                 color, piece_type = piece
                 s1 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
                 s2 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
+                if selected:
+                    s2.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
+                    s1.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
                 pos = pygame.Rect(BOARD_POS[0] + x*TILE_SIZE + 1, BOARD_POS[1] + y*TILE_SIZE + 1, TILE_SIZE, TILE_SIZE)
                 screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
                 screen.blit(s1, s1.get_rect(center=pos.center))

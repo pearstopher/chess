@@ -3,6 +3,7 @@
 #
 
 import pygame
+import chess
 
 
 # constants and configuration
@@ -85,6 +86,7 @@ def create_board():
     return board
 
 
+
 def draw_pieces(screen, board, font, selected_piece):
     sx, sy = None, None
     if selected_piece:
@@ -161,7 +163,8 @@ def main():
                 if drop_pos:
                     piece, old_x, old_y = selected_piece
                     # board[old_y][old_x] = 0
-                    board[int(old_y)][old_x] = 0
+                    # board[int(old_y)][old_x] = 0
+                    board[int(old_y)][old_x] = None
                     new_x, new_y = drop_pos
                     board[new_y][new_x] = piece
                 selected_piece = None

@@ -168,9 +168,10 @@ def game_loop(chess_board, move_generator):
             if e.type == pygame.MOUSEBUTTONUP:
                 if drop_pos:
                     piece, old_x, old_y = selected_piece
-                    board[int(old_y)][old_x] = None
-                    new_x, new_y = drop_pos
-                    board[new_y][new_x] = piece
+                    if piece[0] == 'white':
+                        board[int(old_y)][old_x] = None
+                        new_x, new_y = drop_pos
+                        board[new_y][new_x] = piece
                 selected_piece = None
                 drop_pos = None
 

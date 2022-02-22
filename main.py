@@ -2,7 +2,13 @@
 # Christopher Juncker
 
 import chess
+import random
 from gui import game_loop
+
+
+def random_move(board):
+    moves = board.legal_moves()
+    return random.choice(moves)
 
 
 def main():
@@ -10,7 +16,10 @@ def main():
     board = chess.Board()
 
     # run the game loop to display the board UI
-    game_loop(board)
+    # parameters:
+    #   a chess board
+    #   a move generation function
+    game_loop(board, random_move)
 
 
 if __name__ == '__main__':

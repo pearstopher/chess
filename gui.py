@@ -64,7 +64,7 @@ def create_board_from_fen(fen):
         elif f in ('1', '2', '3', '4', '5', '6', '7', '8'):
             row = row + int(f)
         elif f in ('K', 'k', 'Q', 'q', 'R', 'r', 'N', 'n', 'B', 'b', 'P', 'p'):
-            board[col][row] = get_piece(f)
+            board[int(col)][row] = get_piece(f)  # why suddenly need to ensure col is int?
             row = row + 1
     return board
 
@@ -143,7 +143,7 @@ def draw_drag(screen, board, selected_piece, font):
         return x, y
 
 
-def game_loop(chess_board):
+def game_loop(chess_board, move_generator):
     pygame.init()
     font = pygame.font.SysFont('', 32)
     pygame.display.set_caption("Chess Board")

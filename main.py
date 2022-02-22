@@ -86,6 +86,52 @@ def create_board():
     return board
 
 
+def create_board_from_fen(fen):
+    board = []
+    for y in range(8):
+        board.append([])
+        for x in range(8):
+            board[y].append(None)
+    col = 0
+    row = 0
+    for f in fen:
+        if f == '/':
+            col = col + 1
+            row = 0
+        elif f in ('1', '2', '3', '4', '5', '6', '7', '8'):
+            rank = row + int(f)
+        elif f in ('K', 'k', 'Q', 'q', 'R', 'r', 'N', 'n', 'B', 'b', 'P', 'p'):
+            board[row][col] = get_piece(f)
+            rank = row + 1
+    return board
+
+
+def get_piece(f):
+    if f == 'K':
+        return 'white', 'king'
+    elif f == 'k':
+        return 'black', 'king'
+    elif f == 'Q':
+        return 'white', 'queen'
+    elif f == 'q':
+        return 'black', 'queen'
+    elif f == 'R':
+        return 'white', 'rook'
+    elif f == 'r':
+        return 'black', 'rook'
+    elif f == 'N':
+        return 'white', 'knight'
+    elif f == 'n':
+        return 'black', 'knight'
+    elif f == 'B':
+        return 'white', 'bishop'
+    elif f == 'b':
+        return 'black', 'bishop'
+    elif f == 'P':
+        return 'white', 'pawn'
+    elif f == 'p':
+        return 'black', 'pawn'
+
 
 def draw_pieces(screen, board, font, selected_piece):
     sx, sy = None, None

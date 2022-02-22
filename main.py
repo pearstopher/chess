@@ -137,17 +137,15 @@ def draw_drag(screen, board, selected_piece, font):
         return x, y
 
 
-def main():
+def game_loop(chess_board):
     pygame.init()
     font = pygame.font.SysFont('', 32)
     pygame.display.set_caption("Chess Board")
     w = TILE_SIZE*8 + BORDER*2  # width of window
     h = w + INFO_HEIGHT
     screen = pygame.display.set_mode((w, h))
-
-    chessboard = chess.Board()
-    board = create_board_from_fen(chessboard.board_fen())
-
+    # convert the real chess board object to custom board array
+    board = create_board_from_fen(chess_board.board_fen())
     board_surface = create_board_surface()
     clock = pygame.time.Clock()
     selected_piece = None
@@ -178,6 +176,15 @@ def main():
 
         pygame.display.flip()
         clock.tick(60)
+
+
+def main():
+    # create a chess board object
+    board = chess.Board()
+
+    # run the game loop to display the board UI
+    game_loop(board)
+
 
 
 if __name__ == '__main__':

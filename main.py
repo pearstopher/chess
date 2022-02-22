@@ -7,7 +7,7 @@ from gui import game_loop
 
 
 def random_move(board):
-    moves = board.legal_moves()
+    moves = list(board.legal_moves)
     return random.choice(moves)
 
 

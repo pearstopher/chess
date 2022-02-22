@@ -11,6 +11,7 @@
 #
 
 import pygame
+import chess
 
 # constants and configuration
 TILE_SIZE = 64
@@ -156,24 +157,38 @@ def game_loop(chess_board, move_generator):
     clock = pygame.time.Clock()
     selected_piece = None
     drop_pos = None
+    piece = x = y = None
     while True:
-        piece, x, y = get_square_under_mouse(board)
-        events = pygame.event.get()
-        for e in events:
-            if e.type == pygame.QUIT:
-                return
-            if e.type == pygame.MOUSEBUTTONDOWN:
-                if piece is not None:
-                    selected_piece = piece, x, y
-            if e.type == pygame.MOUSEBUTTONUP:
-                if drop_pos:
-                    piece, old_x, old_y = selected_piece
-                    if piece[0] == 'white':
-                        board[int(old_y)][old_x] = None
-                        new_x, new_y = drop_pos
-                        board[new_y][new_x] = piece
-                selected_piece = None
-                drop_pos = None
+        if chess_board.turn == chess.WHITE:
+            piece, x, y = get_square_under_mouse(board)
+            events = pygame.event.get()
+            for e in events:
+                if e.type == pygame.QUIT:
+                    return
+                if e.type == pygame.MOUSEBUTTONDOWN:
+                    if piece is not None:
+                        selected_piece = piece, x, y
+                if e.type == pygame.MOUSEBUTTONUP:
+                    if drop_pos:
+                        piece, old_x, old_y = selected_piece
+                        if piece[0] == 'white':
+                            board[int(old_y)][old_x] = None
+                            new_x, new_y = drop_pos
+                            board[new_y][new_x] = piece
+
+                            # push the move to the real chess board
+                            chess_board.push(move_generator(chess_board))
+                            # update our array representation
+                            board = create_board_from_fen(chess_board.board_fen())
+
+                    selected_piece = None
+                    drop_pos = None
+
+        else:
+            # generate and push a move to the real chess board
+            chess_board.push(move_generator(chess_board))
+            # update our array representation for the UI
+            board = create_board_from_fen(chess_board.board_fen())
 
         screen.fill(pygame.Color(COLOR_BG))
         screen.blit(board_surface, BOARD_POS)

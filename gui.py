@@ -176,10 +176,15 @@ def game_loop(chess_board, move_generator):
                             new_x, new_y = drop_pos
                             board[new_y][new_x] = piece
 
+                            # horrible math to convert board array position to chess.Square
+                            # I have to reverses the columns since my array starts at A8 not A1
+                            move = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x))
                             # push the move to the real chess board
-                            chess_board.push(move_generator(chess_board))
+                            chess_board.push(move)
                             # update our array representation
                             board = create_board_from_fen(chess_board.board_fen())
+                            # board should already be updated since we just moved it
+                            # but for testing at least, I need to see that both agree
 
                     selected_piece = None
                     drop_pos = None

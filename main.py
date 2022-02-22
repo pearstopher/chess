@@ -1,6 +1,6 @@
 # attribution:
 # https://stackoverflow.com/questions/56984542/is-there-an-effiecient-way-of-making-a-function-to-drag-and-drop-multiple-pngs
-#
+# https://stackoverflow.com/questions/68057562/where-do-i-start-with-a-chess-game-made-in-pythonwith-a-gui
 
 import pygame
 import chess

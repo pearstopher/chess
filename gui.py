@@ -159,7 +159,22 @@ def game_loop(chess_board, move_generator):
     drop_pos = None
     piece = x = y = None
     while True:
-        if chess_board.turn == chess.WHITE:
+        outcome = chess_board.outcome()
+        if outcome is not None:
+            print("The game is over.")
+            print("The outcome is", outcome.termination)
+            # the winner is either true, false, or None
+            if outcome.winner is None:
+                winner = "Neither"
+            elif outcome.winner:
+                winner = "White"
+            else:
+                winner = "Black"
+            print("The winner is", winner)
+            print("The result is", outcome.result())
+            return
+
+        elif chess_board.turn == chess.WHITE:
             piece, x, y = get_square_under_mouse(board)
             events = pygame.event.get()
             for e in events:

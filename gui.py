@@ -1,6 +1,14 @@
-# attribution:
+# This file contains a graphical user interface for displaying python-chess boards
+#   - python-chess can be used alone purely via the command line.
+#   - However, having a real chess board is just so convenient!
+#   - Plus, I got to learn a little bit about pygame
+#
+#   - - Pearstopher
+#
+# Helpful resources:
 # https://stackoverflow.com/questions/56984542/is-there-an-effiecient-way-of-making-a-function-to-drag-and-drop-multiple-pngs
 # https://stackoverflow.com/questions/68057562/where-do-i-start-with-a-chess-game-made-in-pythonwith-a-gui
+#
 
 import pygame
 

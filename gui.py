@@ -6,12 +6,15 @@
 #   - - Pearstopher
 #
 # Helpful resources:
-# https://stackoverflow.com/questions/56984542/is-there-an-effiecient-way-of-making-a-function-to-drag-and-drop-multiple-pngs
-# https://stackoverflow.com/questions/68057562/where-do-i-start-with-a-chess-game-made-in-pythonwith-a-gui
+#   https://stackoverflow.com/questions/56984542
+#   https://stackoverflow.com/questions/68057562
 #
 
+import sys
+import os
 import pygame
 import chess
+
 
 # constants and configuration
 TILE_SIZE = 64
@@ -24,6 +27,7 @@ COLOR_BG = (22, 21, 18)
 COLOR_DRAW_LINE = (22, 21, 18)
 COLOR_DRAW_SELECT = (220, 10, 0, 50)
 COLOR_DRAW_DRAG = (0, 220, 0, 50)
+ENABLE_ILLEGAL_MOVES = False  # allow white to make custom moves (for testing)
 
 
 # create the board surface by drawing the tiles
@@ -108,14 +112,25 @@ def draw_pieces(screen, board, font, selected_piece):
             if piece:
                 selected = x == sx and y == sy
                 color, piece_type = piece
-                s1 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
-                s2 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
+                s1 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
+                s2 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
                 if selected:
                     s2.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
                     s1.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
                 pos = pygame.Rect(BOARD_POS[0] + x*TILE_SIZE + 1, BOARD_POS[1] + y*TILE_SIZE + 1, TILE_SIZE, TILE_SIZE)
                 screen.blit(s2, s2.get_rect(center=pos.center).move(1, 1))
                 screen.blit(s1, s1.get_rect(center=pos.center))
+
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 def draw_selector(screen, piece, x, y):
@@ -132,8 +147,8 @@ def draw_drag(screen, board, selected_piece, font):
             pygame.draw.rect(screen, COLOR_DRAW_DRAG, rect, 3)
 
         color, piece_type = selected_piece[0]
-        s1 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
-        s2 = pygame.image.load("images/" + color + "/" + piece_type + ".png").convert_alpha()
+        s1 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
+        s2 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
 
         pos = pygame.Vector2(pygame.mouse.get_pos())
         screen.blit(s2, s2.get_rect(center=pos + pygame.Vector2((1, 1))))
@@ -142,6 +157,48 @@ def draw_drag(screen, board, selected_piece, font):
                                     selected_piece[2] * TILE_SIZE, TILE_SIZE, TILE_SIZE)
         pygame.draw.line(screen, pygame.Color(COLOR_DRAW_LINE), selected_rect.center, pos, 2)
         return x, y
+
+
+def draw_info(screen, chess_board, font):
+    last_move_w = "White: "
+    last_move_b = "Black: "
+    ply = chess_board.ply()
+
+    if ply < 2:
+        last_move_w += "None"
+        last_move_b += "None"
+    else:
+        last_move_w += chess_board.move_stack[ply - 2].uci()
+        last_move_b += chess_board.peek().uci()
+
+    black_win = white_win = checkmate = ""
+    outcome = chess_board.outcome()
+    if outcome is not None:
+        if outcome.winner is None:
+            checkmate = "Draw"
+        elif outcome.winner:
+            white_win = "White wins!"
+            checkmate = "Checkmate"
+        else:
+            black_win = "Black wins!"
+            checkmate = "Checkmate"
+
+    s1 = font.render(last_move_w, True, pygame.Color(COLOR_LIGHT))
+    s2 = font.render(last_move_b, True, pygame.Color(COLOR_DARK))
+    s3 = font.render(white_win, True, pygame.Color(COLOR_DRAW_DRAG))
+    s4 = font.render(black_win, True, pygame.Color(COLOR_DRAW_SELECT))
+    s5 = font.render(checkmate, True, pygame.Color('white'))
+
+    pos1 = pygame.Rect(BORDER, BORDER*3 + TILE_SIZE*8, TILE_SIZE*8, INFO_HEIGHT)
+    pos2 = pygame.Rect(BORDER, BORDER*3 + TILE_SIZE*8, TILE_SIZE*8, INFO_HEIGHT)
+    pos3 = pygame.Rect(BORDER, BORDER*3 + TILE_SIZE*8 + 25, TILE_SIZE*8, INFO_HEIGHT)
+    pos4 = pygame.Rect(BORDER, BORDER*3 + TILE_SIZE*8 + 25, TILE_SIZE*8, INFO_HEIGHT)
+    pos5 = pygame.Rect(BORDER, BORDER*3 + TILE_SIZE*8 + 25, TILE_SIZE*8, INFO_HEIGHT)
+    screen.blit(s1, s1.get_rect(topleft=pos1.topleft))
+    screen.blit(s2, s2.get_rect(topright=pos2.topright))
+    screen.blit(s3, s2.get_rect(topleft=pos3.topleft))
+    screen.blit(s4, s2.get_rect(topright=pos4.topright))
+    screen.blit(s5, s2.get_rect(midtop=pos5.midtop))
 
 
 def game_loop(chess_board, move_generator):
@@ -159,22 +216,7 @@ def game_loop(chess_board, move_generator):
     drop_pos = None
     piece = x = y = None
     while True:
-        outcome = chess_board.outcome()
-        if outcome is not None:
-            print("The game is over.")
-            print("The outcome is", outcome.termination)
-            # the winner is either true, false, or None
-            if outcome.winner is None:
-                winner = "Neither"
-            elif outcome.winner:
-                winner = "White"
-            else:
-                winner = "Black"
-            print("The winner is", winner)
-            print("The result is", outcome.result())
-            return
-
-        elif chess_board.turn == chess.WHITE:
+        if chess_board.turn == chess.WHITE:
             piece, x, y = get_square_under_mouse(board)
             events = pygame.event.get()
             for e in events:
@@ -191,7 +233,7 @@ def game_loop(chess_board, move_generator):
                             # horrible math to convert board array position to chess.Square
                             # I have to reverses the columns since my array starts at A8 not A1
                             move = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x))
-                            if move in chess_board.legal_moves:
+                            if move in chess_board.legal_moves or ENABLE_ILLEGAL_MOVES:
                                 # push the move to the real chess board
                                 chess_board.push(move)
                                 # update our array representation
@@ -203,16 +245,24 @@ def game_loop(chess_board, move_generator):
                     drop_pos = None
 
         else:
-            # generate and push a move to the real chess board
-            chess_board.push(move_generator(chess_board))
-            # update our array representation for the UI
-            board = create_board_from_fen(chess_board.board_fen())
+            events = pygame.event.get()
+            for e in events:
+                if e.type == pygame.QUIT:
+                    return
+            # don't try to play if the game is over ( actually this just meant there were no available moves )
+            outcome = chess_board.outcome()
+            if outcome is None:
+                # generate and push a move to the real chess board
+                chess_board.push(move_generator(chess_board))
+                # update our array representation for the UI
+                board = create_board_from_fen(chess_board.board_fen())
 
         screen.fill(pygame.Color(COLOR_BG))
         screen.blit(board_surface, BOARD_POS)
         draw_pieces(screen, board, font, selected_piece)
         draw_selector(screen, piece, x, y)
         drop_pos = draw_drag(screen, board, selected_piece, font)
+        draw_info(screen, chess_board, font)
 
         pygame.display.flip()
         clock.tick(60)

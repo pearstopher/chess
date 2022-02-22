@@ -6,7 +6,9 @@ import random
 from gui import game_loop
 
 
-def random_move(board):
+# a move generator should accept a chess.Board
+#   and return a chess.Move
+def random_move_generator(board):
     moves = list(board.legal_moves)
     return random.choice(moves)
 
@@ -19,7 +21,7 @@ def main():
     # parameters:
     #   a chess board
     #   a move generation function
-    game_loop(board, random_move)
+    game_loop(board, random_move_generator)
 
 
 if __name__ == '__main__':

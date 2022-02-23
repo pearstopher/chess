@@ -1,5 +1,12 @@
-# Chess
-# Christopher Juncker
+# Chess Program
+#
+# This chess program currently responds to the user by making random moves.
+#
+# Requirements:
+# > pip install pygame
+# > pip install python-chess
+#
+
 
 import chess
 import random

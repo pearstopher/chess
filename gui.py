@@ -1,11 +1,13 @@
-# This file contains a graphical user interface for displaying python-chess boards
-#   - python-chess can be used alone purely via the command line.
-#   - However, having a real chess board is just so convenient!
-#   - Plus, I got to learn a little bit about pygame
+# Chess UI
 #
-#   - - Pearstopher
+# This file contains a graphical user interface for displaying python-chess boards.
+# Everything below is purely visual and has no relation to any of the core algorithms
+# involved in the operation of our chess program. I simply thought it might become
+# extremely tedious to do everything through the command line.
 #
-# Helpful resources:
+#   - Pearstopher
+#
+# Helpful references:
 #   https://stackoverflow.com/questions/56984542
 #   https://stackoverflow.com/questions/68057562
 #

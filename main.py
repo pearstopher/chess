@@ -6,8 +6,6 @@
 # > pip install pygame
 # > pip install python-chess
 #
-# todo: fix moves displaying incorrectly after checkmate
-# todo: enable pawn promotion
 
 
 import chess

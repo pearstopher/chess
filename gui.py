@@ -11,6 +11,9 @@
 #   https://stackoverflow.com/questions/56984542
 #   https://stackoverflow.com/questions/68057562
 #
+# todo: fix moves displaying incorrectly after checkmate
+# todo: fix crash if you try to place a piece outside of the board
+
 
 import sys
 import os
@@ -235,7 +238,15 @@ def game_loop(chess_board, move_generator):
                             # horrible math to convert board array position to chess.Square
                             # I have to reverses the columns since my array starts at A8 not A1
                             move = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x))
-                            if move in chess_board.legal_moves or ENABLE_ILLEGAL_MOVES:
+                            move2 = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x), chess.QUEEN)
+                            # quick hack to enable pawn promotion
+                            if move2 in chess_board.legal_moves:
+                                # push the move to the real chess board
+                                chess_board.push(move2)
+                                # update our array representation
+                                board[int(old_y)][old_x] = None
+                                board[int(new_y)][new_x] = ('white', 'queen')
+                            elif move in chess_board.legal_moves or ENABLE_ILLEGAL_MOVES:
                                 # push the move to the real chess board
                                 chess_board.push(move)
                                 # update our array representation

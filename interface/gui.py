@@ -11,7 +11,6 @@
 #   https://stackoverflow.com/questions/56984542
 #   https://stackoverflow.com/questions/68057562
 #
-# todo: fix moves displaying incorrectly after checkmate
 # todo: fix crash if you try to place a piece outside of the board
 
 
@@ -32,7 +31,7 @@ COLOR_BG = (22, 21, 18)
 COLOR_DRAW_LINE = (22, 21, 18)
 COLOR_DRAW_SELECT = (220, 10, 0, 50)
 COLOR_DRAW_DRAG = (0, 220, 0, 50)
-ENABLE_ILLEGAL_MOVES = True  # allow white to make custom moves (for testing)
+ENABLE_ILLEGAL_MOVES = False  # allow white to make custom moves (for testing)
 IMAGE_PATH = "interface/images/"
 
 
@@ -215,7 +214,7 @@ def draw_info(screen, chess_board, font):
 def game_loop(chess_board, move_generator):
     pygame.init()
     font = pygame.font.SysFont('', 32)
-    pygame.display.set_caption("Stanley")
+    pygame.display.set_caption("Chess UI")
     w = TILE_SIZE*8 + BORDER*2  # width of window
     h = w + INFO_HEIGHT
     screen = pygame.display.set_mode((w, h))

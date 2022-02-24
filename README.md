@@ -3,6 +3,7 @@
 This is a chess UI which uses `python-chess` and `pygame` to implement a working chess board.
 
 [Python Chess](https://python-chess.readthedocs.io/en/latest/)
+
 [Pygame](https://www.pygame.org/docs/)
 
 ## Move Generation

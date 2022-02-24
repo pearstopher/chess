@@ -32,7 +32,7 @@ COLOR_BG = (22, 21, 18)
 COLOR_DRAW_LINE = (22, 21, 18)
 COLOR_DRAW_SELECT = (220, 10, 0, 50)
 COLOR_DRAW_DRAG = (0, 220, 0, 50)
-ENABLE_ILLEGAL_MOVES = False  # allow white to make custom moves (for testing)
+ENABLE_ILLEGAL_MOVES = True  # allow white to make custom moves (for testing)
 IMAGE_PATH = "interface/images/"
 
 
@@ -169,20 +169,25 @@ def draw_info(screen, chess_board, font):
     last_move_w = "White: "
     last_move_b = "Black: "
     ply = chess_board.ply()
+    turn = chess_board.turn
 
-    if ply < 2:
-        last_move_w += "None"
-        last_move_b += "None"
+    if turn == chess.BLACK:
+        last_move_b += chess_board.move_stack[ply - 2].uci()
+        last_move_w += chess_board.peek().uci()
     else:
-        last_move_w += chess_board.move_stack[ply - 2].uci()
-        last_move_b += chess_board.peek().uci()
+        if ply < 2:
+            last_move_w += "None"
+            last_move_b += "None"
+        else:
+            last_move_w += chess_board.move_stack[ply - 2].uci()
+            last_move_b += chess_board.peek().uci()
 
     black_win = white_win = checkmate = ""
     outcome = chess_board.outcome()
     if outcome is not None:
         if outcome.winner is None:
             checkmate = "Draw"
-        elif outcome.winner:
+        elif outcome.winner == chess.WHITE:
             white_win = "White wins!"
             checkmate = "Checkmate"
         else:

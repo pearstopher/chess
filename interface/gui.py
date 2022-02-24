@@ -211,7 +211,9 @@ def draw_info(screen, chess_board, font):
     screen.blit(s5, s2.get_rect(midtop=pos5.midtop))
 
 
-def game_loop(chess_board, move_generator):
+# white and black can each be given a move generator function
+# otherwise they both accept player moves
+def game_loop(chess_board, white="player", black="player"):
     pygame.init()
     font = pygame.font.SysFont('', 32)
     pygame.display.set_caption("Chess UI")
@@ -226,7 +228,9 @@ def game_loop(chess_board, move_generator):
     drop_pos = None
     piece = x = y = None
     while True:
-        if chess_board.turn == chess.WHITE:
+
+        if chess_board.turn == chess.WHITE and white == "player" \
+                or chess_board.turn == chess.BLACK and black == "player":
             piece, x, y = get_square_under_mouse(board)
             events = pygame.event.get()
             for e in events:
@@ -238,27 +242,27 @@ def game_loop(chess_board, move_generator):
                 if e.type == pygame.MOUSEBUTTONUP:
                     if drop_pos:
                         piece, old_x, old_y = selected_piece
-                        if piece[0] == 'white':
-                            new_x, new_y = drop_pos
-                            # horrible math to convert board array position to chess.Square
-                            # I have to reverses the columns since my array starts at A8 not A1
-                            move = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x))
-                            move2 = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x), chess.QUEEN)
-                            # quick hack to enable pawn promotion
-                            if move2 in chess_board.legal_moves:
-                                # push the move to the real chess board
-                                chess_board.push(move2)
-                                # update our array representation
-                                board[int(old_y)][old_x] = None
-                                board[int(new_y)][new_x] = ('white', 'queen')
-                            elif move in chess_board.legal_moves or ENABLE_ILLEGAL_MOVES:
-                                # push the move to the real chess board
-                                chess_board.push(move)
-                                # update our array representation
-                                board[int(old_y)][old_x] = None
-                                board[new_y][new_x] = piece
-                            # this refresh will reset the board if a piece was dragged somewhere invalid
-                            board = create_board_from_fen(chess_board.board_fen())
+                        # if piece[0] == 'white':
+                        new_x, new_y = drop_pos
+                        # horrible math to convert board array position to chess.Square
+                        # I have to reverses the columns since my array starts at A8 not A1
+                        move = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x))
+                        move2 = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x), chess.QUEEN)
+                        # quick hack to enable pawn promotion
+                        if move2 in chess_board.legal_moves:
+                            # push the move to the real chess board
+                            chess_board.push(move2)
+                            # update our array representation
+                            board[int(old_y)][old_x] = None
+                            board[int(new_y)][new_x] = ('white', 'queen')
+                        elif move in chess_board.legal_moves or ENABLE_ILLEGAL_MOVES:
+                            # push the move to the real chess board
+                            chess_board.push(move)
+                            # update our array representation
+                            board[int(old_y)][old_x] = None
+                            board[new_y][new_x] = piece
+                        # this refresh will reset the board if a piece was dragged somewhere invalid
+                        board = create_board_from_fen(chess_board.board_fen())
                     selected_piece = None
                     drop_pos = None
 
@@ -267,13 +271,17 @@ def game_loop(chess_board, move_generator):
             for e in events:
                 if e.type == pygame.QUIT:
                     return
-            # don't try to play if the game is over ( actually this just meant there were no available moves )
+            # don't try to play if the game is over
             outcome = chess_board.outcome()
             if outcome is None:
                 # generate and push a move to the real chess board
-                chess_board.push(move_generator(chess_board))
+                if chess_board.turn == chess.WHITE:
+                    chess_board.push(white(chess_board))
+                else:
+                    chess_board.push(black(chess_board))
                 # update our array representation for the UI
                 board = create_board_from_fen(chess_board.board_fen())
+                # end of move generation
 
         screen.fill(pygame.Color(COLOR_BG))
         screen.blit(board_surface, BOARD_POS)

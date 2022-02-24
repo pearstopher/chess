@@ -31,8 +31,9 @@ def main():
     # run the game loop to display the board UI
     # parameters:
     #   a chess board
-    #   a move generation function
-    game_loop(board, random_move_generator)
+    #   a move generation function for white (optional)
+    #   a move generation function for black (optional)
+    game_loop(board, white=random_move_generator)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-# Chess UI
+# Chess GUI
 #
 # This file contains a graphical user interface for displaying python-chess boards.
 # Everything below is purely visual and has no relation to any of the core algorithms
@@ -33,6 +33,7 @@ COLOR_DRAW_LINE = (22, 21, 18)
 COLOR_DRAW_SELECT = (220, 10, 0, 50)
 COLOR_DRAW_DRAG = (0, 220, 0, 50)
 ENABLE_ILLEGAL_MOVES = False  # allow white to make custom moves (for testing)
+IMAGE_PATH = "interface/images/"
 
 
 # create the board surface by drawing the tiles
@@ -117,8 +118,8 @@ def draw_pieces(screen, board, font, selected_piece):
             if piece:
                 selected = x == sx and y == sy
                 color, piece_type = piece
-                s1 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
-                s2 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
+                s1 = pygame.image.load(resource_path(IMAGE_PATH + color + "/" + piece_type + ".png")).convert_alpha()
+                s2 = pygame.image.load(resource_path(IMAGE_PATH + color + "/" + piece_type + ".png")).convert_alpha()
                 if selected:
                     s2.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
                     s1.fill((255, 255, 255, 90), None, pygame.BLEND_RGBA_MULT)
@@ -152,8 +153,8 @@ def draw_drag(screen, board, selected_piece, font):
             pygame.draw.rect(screen, COLOR_DRAW_DRAG, rect, 3)
 
         color, piece_type = selected_piece[0]
-        s1 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
-        s2 = pygame.image.load(resource_path("images/" + color + "/" + piece_type + ".png")).convert_alpha()
+        s1 = pygame.image.load(resource_path(IMAGE_PATH + color + "/" + piece_type + ".png")).convert_alpha()
+        s2 = pygame.image.load(resource_path(IMAGE_PATH + color + "/" + piece_type + ".png")).convert_alpha()
 
         pos = pygame.Vector2(pygame.mouse.get_pos())
         screen.blit(s2, s2.get_rect(center=pos + pygame.Vector2((1, 1))))

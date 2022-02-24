@@ -2,15 +2,19 @@
 #
 # This chess program currently responds to the user by making random moves.
 #
-# Requirements:
-# > pip install pygame
+# Basic requirements:
 # > pip install python-chess
+# > pip install pygame
 #
-
 
 import chess
 import random
-from gui import game_loop
+
+GUI = True  # choose between graphical or terminal interface
+if GUI:
+    from interface.gui import game_loop
+else:
+    from interface.tui import game_loop
 
 
 # a move generator should accept a chess.Board

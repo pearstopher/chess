@@ -13,36 +13,49 @@ import chess
 ENABLE_ILLEGAL_MOVES = False
 
 
-def game_loop(board, move_generator):
+def game_loop(board, white="player", black="player"):
     while True:
-        if board.turn == chess.WHITE:
+        # find out if the game is over
+        outcome = board.outcome()
+        if outcome is None:
 
-            # print chess board to the terminal
-            print()
-            print(board.unicode(invert_color=True))
+            if board.turn == chess.WHITE and white == "player" \
+                    or board.turn == chess.BLACK and black == "player":
 
-            # prompt the player for a move
-            legal_moves = list(board.legal_moves)
-            print("\nAvailable moves:")
-            for m in legal_moves:
-                print(m.uci(), end=", ")
-            uci = input("\n\nWhite's move: ")
-            move = chess.Move.from_uci(uci)
+                # print chess board to the terminal when it is a players turn
+                print()
+                print(board.unicode(invert_color=True))
 
-            # attempt to make the move
-            if move in board.legal_moves or ENABLE_ILLEGAL_MOVES:
-                board.push(move)
+                # prompt the player for a move
+                legal_moves = list(board.legal_moves)
+                print("\nAvailable moves:")
+                for m in legal_moves:
+                    print(m.uci(), end=", ")
+                if board.turn == chess.WHITE:
+                    uci = input("\n\nWhite's move: ")
+                else:
+                    uci = input("\n\nBlack's move: ")
+                move = chess.Move.from_uci(uci)
+
+                # attempt to make the move
+                if move in board.legal_moves or ENABLE_ILLEGAL_MOVES:
+                    board.push(move)
+
+            else:
+                # generate and push a move to the board
+                # generate and push a move to the real chess board
+                if board.turn == chess.WHITE:
+                    move = white(board)
+                    board.push(move)
+                    print("White's move:", move.uci())
+                else:
+                    move = black(board)
+                    board.push(move)
+                    print("Black's move:", move.uci())
 
         else:
-            # find out if the game is over
-            outcome = board.outcome()
-            if outcome is None:
-                # generate and push a move to the board
-                move = move_generator(board)
-                board.push(move)
-                print("Black's move:", move.uci())
-            else:
-                print("Game over!")
-                print(outcome)
-                print()
-                return
+            print("Game over!")
+            print(outcome)
+            print("\nFinal position:")
+            print(board.unicode(invert_color=True))
+            return

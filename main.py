@@ -10,7 +10,7 @@
 import chess
 import random
 
-GUI = True  # choose between graphical or terminal interface
+GUI = False  # choose between graphical or terminal interface
 if GUI:
     from interface.gui import game_loop
 else:

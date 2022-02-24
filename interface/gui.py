@@ -210,9 +210,10 @@ def draw_info(screen, chess_board, font):
     screen.blit(s5, s2.get_rect(midtop=pos5.midtop))
 
 
-# white and black can each be given a move generator function
-# otherwise they both accept player moves
-def game_loop(chess_board, white="player", black="player"):
+# game loop
+# white and black can each be passed a move generator function
+# otherwise they both accept player moves through the UI
+def play_chess(chess_board, white="player", black="player"):
     pygame.init()
     font = pygame.font.SysFont('', 32)
     pygame.display.set_caption("Chess UI")

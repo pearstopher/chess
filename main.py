@@ -12,9 +12,9 @@ import random
 
 GUI = True  # choose between graphical or terminal interface
 if GUI:
-    from interface.gui import game_loop
+    from interface.gui import play_chess
 else:
-    from interface.tui import game_loop
+    from interface.tui import play_chess
 
 
 # a move generator should accept a chess.Board
@@ -33,7 +33,7 @@ def main():
     #   a chess board
     #   a move generation function for white (optional, defaults to player)
     #   a move generation function for black (optional, defaults to player)
-    game_loop(board, black=random_move_generator)
+    play_chess(board, black=random_move_generator)
 
 
 if __name__ == '__main__':

@@ -13,7 +13,8 @@ import chess
 ENABLE_ILLEGAL_MOVES = False
 
 
-def game_loop(board, white="player", black="player"):
+# game loop
+def play_chess(board, white="player", black="player"):
     while True:
         # find out if the game is over
         outcome = board.outcome()

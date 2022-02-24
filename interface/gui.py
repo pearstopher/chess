@@ -11,7 +11,6 @@
 #   https://stackoverflow.com/questions/56984542
 #   https://stackoverflow.com/questions/68057562
 #
-# todo: fix crash if you try to place a piece outside of the board
 
 
 import sys

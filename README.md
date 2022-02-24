@@ -19,9 +19,30 @@ def random_move_generator(board):
 
 A `move generator` is essentially any function which accepts a `chess.Board` and returns a `chess.Move`.
 
+## Game Initialization
+
+To play a game, you just need to call the `play_chess()` function. It accepts two optional arguments,
+`white` and `black` with which you can pass any move generation function.
+
+### Use cases:
+```python
+# Case 1. No arguments. The user will play both sides of the board.
+play_chess()
+
+# Case 2. The user will play white. The computer will play black.
+play_chess(black=move_generation_function)
+
+# Case 3. The user will play black. The computer will play white.
+play_chess(white=move_generation_function)
+
+# Case 4. The computer will play both sides.
+play_chess(white=move_generation_function_a, black=move_generation_function_b)
+```
+
+
 ## User Interface
 
-I learned enough to make a basic chess interface which interfaces with our chess library.
+I learned enough to make a basic chess interface which can interact with our chess library.
 
 ### Example 1. Initial Position
 

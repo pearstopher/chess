@@ -8,8 +8,8 @@ This is a chess UI which uses `python-chess` and `pygame` to implement a working
 
 ## Move Generation
 
-All the move generation code is in `main.py`. The opponent moves completely randomly with no skill and only a 
-knowledge of which moves are legal. You will see that generating a random move with our library is very simple!
+I have included a sample move generation function in `main.py`. It generates a valid move at random from the list
+of all available moves. You will see that creating a random move generator with our library is very simple!
 
 ```python
 def random_move_generator(board):
@@ -17,7 +17,8 @@ def random_move_generator(board):
     return random.choice(moves)
 ```
 
-A `move generator` is essentially any function which accepts a `chess.Board` and returns a `chess.Move`.
+A "move generator" is just going to be any function which accepts a `chess.Board` and returns a `chess.Move`.
+The goal of this project then is to use AI to create an intelligent move generator.
 
 ## Game Initialization
 

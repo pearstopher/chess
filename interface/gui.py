@@ -251,7 +251,7 @@ def play_chess(chess_board, white="player", black="player"):
                         if drop_pos:
                             piece, old_x, old_y = selected_piece
                             new_x, new_y = drop_pos
-                            if new_x and new_y:
+                            if new_x is not None and new_y is not None:
                                 # horrible math to convert board array position to chess.Square
                                 # I have to reverses the columns since my array starts at A8 not A1
                                 move = chess.Move(((7 - old_y)*8 + old_x), ((7 - new_y)*8 + new_x))

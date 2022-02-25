@@ -1,14 +1,16 @@
 # Chess UI
 
-This is a chess UI which uses `python-chess` and `pygame` to implement a working chess board.
+This is a chess UI which uses [Python Chess](https://python-chess.readthedocs.io/en/latest/)
+and [Pygame](https://www.pygame.org/docs/) to implement a working chess board.
 
-[Python Chess](https://python-chess.readthedocs.io/en/latest/)
-
-[Pygame](https://www.pygame.org/docs/)
+ ```bash
+ pip install python-chess
+ pip install pygame
+ ````
 
 ## Move Generation
 
-I have included a sample move generation function in `main.py`. It generates a valid move at random from the list
+I have included a sample move generation function in `example.py`. It generates a valid move at random from the list
 of all available moves. You will see that creating a random move generator with our library is very simple!
 
 ```python
@@ -17,13 +19,14 @@ def random_move_generator(board):
     return random.choice(moves)
 ```
 
-A "move generator" is just going to be any function which accepts a `chess.Board` and returns a `chess.Move`.
+A "move generator" is simply any function which accepts a `chess.Board` and returns a `chess.Move`.
 The goal of this project then is to use AI to create an intelligent move generator.
 
 ## Game Initialization
 
 To play a game, you just need to call the `play_chess()` function. It accepts two optional arguments,
 `white` and `black` with which you can pass any move generation function.
+Run `example.py` to try this out.
 
 ### Use cases:
 ```python
@@ -43,7 +46,7 @@ play_chess(white=move_generation_function_a, black=move_generation_function_b)
 
 ## User Interface
 
-I learned enough to make a basic chess interface which can interact with our chess library.
+I learned enough about *pygame* to make a basic chess interface which can interact with our chess library.
 
 ### Example 1. Initial Position
 

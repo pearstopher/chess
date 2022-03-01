@@ -10,7 +10,7 @@ and [Pygame](https://www.pygame.org/docs/) to implement a working chess board.
 
 ## Move Generation
 
-I have included a sample move generation function in `example.py`. It generates a valid move at random from the list
+I have included a sample move generation function in each `example.py` script. It generates a valid move at random from the list
 of all available moves. You will see that creating a random move generator with our library is very simple!
 
 ```python
@@ -44,9 +44,10 @@ play_chess(white=move_generation_function_a, black=move_generation_function_b)
 ```
 
 
-## User Interface
+## Graphical User Interface
 
 I learned enough about *pygame* to make a basic chess interface which can interact with our chess library.
+You can run `example_gui.py` to see the graphical interface in action.
 
 ### Example 1. Initial Position
 
@@ -55,4 +56,11 @@ I learned enough about *pygame* to make a basic chess interface which can intera
 ### Example 2. Scholar's Mate
 
 ![Fool's Mate](interface/images/scholars_mate.png)
+
+
+## Terminal User Interface
+
+The graphical interface is useful for human play, but the terminal interface is much more convenient
+for self-play, when the AI wants to play against itself, maybe many times in rapid succession.
+You can run `example_tui.py` to see the terminal interface in action as well.
 

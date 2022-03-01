@@ -25,8 +25,11 @@ def random_move_generator(board):
 
 
 def main():
-
     # Let's make the move generator play ten games against itself
+
+    # create an array to hold the game outcomes
+    outcomes = []
+
     for _ in range(10):
 
         # create a chess board object
@@ -37,7 +40,16 @@ def main():
         #   a chess board
         #   a move generation function for white (optional, defaults to player)
         #   a move generation function for black (optional, defaults to player)
-        play_chess(board, white=random_move_generator, black=random_move_generator)
+        #
+        # return value:
+        #   the outcome of the game
+        outcome = play_chess(board, white=random_move_generator, black=random_move_generator)
+        outcomes.append(outcome)
+
+    # display all the results
+    print("\n\nResults:")
+    for o in outcomes:
+        print(o)
 
 
 if __name__ == '__main__':

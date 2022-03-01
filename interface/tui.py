@@ -59,4 +59,4 @@ def play_chess(board, white="player", black="player"):
             print(outcome)
             print("\nFinal position:")
             print(board.unicode(invert_color=True))
-            return
+            return outcome

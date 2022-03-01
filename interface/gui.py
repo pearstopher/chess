@@ -231,7 +231,7 @@ def play_chess(chess_board, white="player", black="player"):
         events = pygame.event.get()
         for e in events:
             if e.type == pygame.QUIT:
-                return
+                return chess_board.outcome()
 
         # don't try to play if the game is over
         outcome = chess_board.outcome()
@@ -243,7 +243,7 @@ def play_chess(chess_board, white="player", black="player"):
                 # events = pygame.event.get()
                 for e in events:
                     if e.type == pygame.QUIT:
-                        return
+                        return outcome
                     if e.type == pygame.MOUSEBUTTONDOWN:
                         if piece is not None:
                             selected_piece = piece, x, y

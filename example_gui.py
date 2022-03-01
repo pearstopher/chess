@@ -33,6 +33,9 @@ def main():
     #   a chess board
     #   a move generation function for white (optional, defaults to player)
     #   a move generation function for black (optional, defaults to player)
+    #
+    # return value:
+    #   the outcome of the game (ignored)
     play_chess(board, black=random_move_generator)
 
 

@@ -10,7 +10,7 @@
 import chess
 import random
 
-GUI = True  # choose between graphical or terminal interface
+GUI = False  # choose between graphical or terminal interface
 if GUI:
     from interface.gui import play_chess
 else:
@@ -25,15 +25,19 @@ def random_move_generator(board):
 
 
 def main():
-    # create a chess board object
-    board = chess.Board()
 
-    # run the game loop to display the board UI
-    # parameters:
-    #   a chess board
-    #   a move generation function for white (optional, defaults to player)
-    #   a move generation function for black (optional, defaults to player)
-    play_chess(board, black=random_move_generator)
+    # Let's make the move generator play ten games against itself
+    for _ in range(10):
+
+        # create a chess board object
+        board = chess.Board()
+
+        # run the game loop to display the board UI
+        # parameters:
+        #   a chess board
+        #   a move generation function for white (optional, defaults to player)
+        #   a move generation function for black (optional, defaults to player)
+        play_chess(board, white=random_move_generator, black=random_move_generator)
 
 
 if __name__ == '__main__':

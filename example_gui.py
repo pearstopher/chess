@@ -33,7 +33,7 @@ def main():
     # return value:
     #   the outcome of the game (ignored)
     move_generator = ChessEngineHelper.MoveGenerator()
-    play_chess(board, black=move_generator.greedy_best_move_generator)
+    play_chess(board, black=move_generator.mini_max_easy)
 
 
 if __name__ == '__main__':

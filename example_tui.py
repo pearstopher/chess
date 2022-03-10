@@ -39,8 +39,8 @@ def main():
         # return value:
         #   the outcome of the game
         move_generator = ChessEngineHelper.MoveGenerator()
-        outcome = play_chess(board, white=move_generator.random_move_generator,
-                             black=move_generator.greedy_best_move_generator)
+        outcome = play_chess(board, white=move_generator.random_move,
+                             black=move_generator.greedy_best_next_move)
         outcomes.append(outcome)
 
     # display all the results

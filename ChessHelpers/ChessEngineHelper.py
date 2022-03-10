@@ -38,16 +38,17 @@ class MoveGenerator:
     '''
     Returns a random move from the list of all possible legal moves
     '''
-    def random_move_generator(self, board):
+
+    def random_move(self, board):
         moves = list(board.legal_moves)
         return random.choice(moves)
 
     '''
-    Evaluate all moves from the list of all possible legal moves and decide which maximizes your score the most.
-    Note: While black tries to minimize the score, white tries to maximize it.
+    Evaluate all moves from the list of all possible next, legal moves and decide which maximizes your score the most.
     We make the move in order to evaluate it and later undo it.
     '''
-    def greedy_best_move_generator(self, board):
+
+    def greedy_best_next_move(self, board):
         legal_moves = list(board.legal_moves)
         turn_multiplier = 1 if board.turn == chess.WHITE else -1
         max_score = -self.CHECKMATE
@@ -67,7 +68,43 @@ class MoveGenerator:
             board.pop()  # undo the move
 
         if best_move is None:
-            return self.random_move_generator(board)
+            return self.random_move(board)
+
+        return best_move
+
+    '''
+    To maximize your score and make the best move, you need to look into the opponent's future best move
+    Only looks at the next opponent move
+    '''
+
+    def mini_max_easy(self, board):
+        legal_moves = list(board.legal_moves)
+        turn_multiplier = 1 if board.turn == chess.WHITE else -1
+        opponent_min_max_score = self.CHECKMATE
+        best_move = None
+
+        for player_move in legal_moves:
+            board.push(player_move)  # make move
+            opponent_moves = list(board.legal_moves)
+            opponent_max_score = -self.CHECKMATE
+            for opponent_move in opponent_moves:
+                board.push(opponent_move)  # make opponent's move
+                if board.is_checkmate():
+                    score = -turn_multiplier * self.CHECKMATE
+                elif board.is_stalemate():
+                    score = self.STALEMATE
+                else:
+                    score = -turn_multiplier * self.score_material(board)
+                if score > opponent_max_score:
+                    opponent_max_score = score
+                board.pop()  # undo the opponent's move
+            if opponent_max_score < opponent_min_max_score:
+                opponent_min_max_score = opponent_max_score
+                best_move = player_move
+            board.pop()  # undo the player's move
+
+        if best_move is None:
+            return self.random_move(board)
 
         return best_move
 

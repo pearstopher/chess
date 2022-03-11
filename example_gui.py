@@ -8,20 +8,16 @@
 #
 
 import chess
-import random
+from ChessHelpers import ChessEngineHelper
+
+CHECKMATE = 1000
+STALEMATE = 0
 
 GUI = True  # choose between graphical or terminal interface
 if GUI:
     from interface.gui import play_chess
 else:
     from interface.tui import play_chess
-
-
-# a move generator should accept a chess.Board
-#   and return a chess.Move
-def random_move_generator(board):
-    moves = list(board.legal_moves)
-    return random.choice(moves)
 
 
 def main():
@@ -36,7 +32,8 @@ def main():
     #
     # return value:
     #   the outcome of the game (ignored)
-    play_chess(board, black=random_move_generator)
+    move_generator = ChessEngineHelper.MoveGenerator()
+    play_chess(board, black=move_generator.mini_max_easy)
 
 
 if __name__ == '__main__':

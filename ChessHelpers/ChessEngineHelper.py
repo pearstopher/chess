@@ -34,7 +34,7 @@ class MoveGenerator:
     def __init__(self):
         self.CHECKMATE = 1000
         self.STALEMATE = 0
-        self.DEPTH = 7  # (in case it's counter-intuitive: these are individual moves, not pairs)
+        self.DEPTH = 6  # (in case it's counter-intuitive: these are individual moves, not pairs)
         self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
         self.QUIT = False
 

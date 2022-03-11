@@ -277,9 +277,15 @@ def play_chess(chess_board, white="player", black="player"):
             else:
                 # generate and push a move to the real chess board
                 if chess_board.turn == chess.WHITE:
-                    chess_board.push(white(chess_board))
+                    move = white(chess_board)
+                    if move is False:
+                        return
+                    chess_board.push(move)
                 else:
-                    chess_board.push(black(chess_board))
+                    move = black(chess_board)
+                    if move is False:
+                        return
+                    chess_board.push(move)
                 # update our array representation for the UI
                 board = create_board_from_fen(chess_board.board_fen())
                 # end of move generation

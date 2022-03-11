@@ -4,6 +4,7 @@ Contains some utility methods that act as extensions to the chess library
 
 import chess
 import random
+import pygame  # need to process pygame events to prevent game freeze
 
 
 class MakeMatrix:
@@ -33,8 +34,9 @@ class MoveGenerator:
     def __init__(self):
         self.CHECKMATE = 1000
         self.STALEMATE = 0
-        self.DEPTH = 6  # (in case it's counter-intuitive: these are individual moves, not pairs)
+        self.DEPTH = 7  # (in case it's counter-intuitive: these are individual moves, not pairs)
         self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
+        self.QUIT = False
 
     '''
     Returns a random move from the list of all possible legal moves
@@ -138,11 +140,23 @@ class MoveGenerator:
         alpha_beta = [-10000, 10000]
 
         self.find_mini_max_move(board, legal_moves, self.DEPTH, maximize, alpha_beta)
+        if self.QUIT is True:
+            return False
+
         if best_move is None:
             best_move = self.random_move(board)
         return best_move
 
     def find_mini_max_move(self, board, legal_moves, depth, maximize, alpha_beta):
+        # keep processing events while the mini max search is going
+        # and allow the user to close the game if a move is in progress
+        events = pygame.event.get()
+        for e in events:
+            if e.type == pygame.QUIT:
+                self.QUIT = True
+        if self.QUIT is True:
+            return 0
+
         global best_move
         if depth == 0:
             return self.score_material(board)

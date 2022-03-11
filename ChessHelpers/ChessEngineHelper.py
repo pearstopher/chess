@@ -33,6 +33,7 @@ class MoveGenerator:
     def __init__(self):
         self.CHECKMATE = 1000
         self.STALEMATE = 0
+        self.DEPTH = 2
         self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
 
     '''
@@ -82,22 +83,27 @@ class MoveGenerator:
         turn_multiplier = 1 if board.turn == chess.WHITE else -1
         opponent_min_max_score = self.CHECKMATE
         best_move = None
-
         for player_move in legal_moves:
             board.push(player_move)  # make move
             opponent_moves = list(board.legal_moves)
-            opponent_max_score = -self.CHECKMATE
-            for opponent_move in opponent_moves:
-                board.push(opponent_move)  # make opponent's move
-                if board.is_checkmate():
-                    score = -turn_multiplier * self.CHECKMATE
-                elif board.is_stalemate():
-                    score = self.STALEMATE
-                else:
-                    score = -turn_multiplier * self.score_material(board)
-                if score > opponent_max_score:
-                    opponent_max_score = score
-                board.pop()  # undo the opponent's move
+            opponent_max_score = self.CHECKMATE
+            if board.is_checkmate():
+                opponent_max_score = -self.CHECKMATE
+            elif board.is_stalemate():
+                opponent_max_score = self.STALEMATE
+            else:
+                opponent_max_score = -self.CHECKMATE
+                for opponent_move in opponent_moves:
+                    board.push(opponent_move)  # make opponent's move
+                    if board.is_checkmate():
+                        score = self.CHECKMATE
+                    elif board.is_stalemate():
+                        score = self.STALEMATE
+                    else:
+                        score = -turn_multiplier * self.score_material(board)
+                    if score > opponent_max_score:
+                        opponent_max_score = score
+                    board.pop()  # undo the opponent's move
             if opponent_max_score < opponent_min_max_score:
                 opponent_min_max_score = opponent_max_score
                 best_move = player_move
@@ -107,6 +113,49 @@ class MoveGenerator:
             return self.random_move(board)
 
         return best_move
+
+    '''
+    Mini Max Recursive Algo
+    '''
+
+    def mini_max_move(self, board):
+        legal_moves = list(board.legal_moves)
+        global best_move
+        best_move = None
+        white_to_move = board.turn == chess.WHITE
+        self.find_mini_max_move(board, legal_moves, self.DEPTH, white_to_move)
+        if best_move is None:
+            best_move = self.random_move(board)
+        return best_move
+
+    def find_mini_max_move(self, board, legal_moves, depth, white_to_move):
+        global best_move
+        if depth == 0:
+            return self.score_material(board)
+        if white_to_move:
+            max_score = -self.CHECKMATE
+            for move in legal_moves:
+                board.push(move)
+                next_moves = list(board.legal_moves)
+                score = self.find_mini_max_move(board, next_moves, depth - 1, False)
+                if score > max_score:
+                    max_score = score
+                    if depth == self.DEPTH:
+                        best_move = move
+                board.pop()
+            return max_score
+        else:
+            min_score = self.CHECKMATE
+            for move in legal_moves:
+                board.push(move)
+                next_moves = list(board.legal_moves)
+                score = self.find_mini_max_move(board, next_moves, depth - 1, True)
+                if score < min_score:
+                    min_score = score
+                    if depth == self.DEPTH:
+                        best_move = move
+                board.pop()
+            return min_score
 
     def score_material(self, board):
         chess_board = MakeMatrix().convert_to_matrix(board)

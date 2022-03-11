@@ -33,7 +33,7 @@ class MoveGenerator:
     def __init__(self):
         self.CHECKMATE = 1000
         self.STALEMATE = 0
-        self.DEPTH = 2
+        self.DEPTH = 6  # (in case it's counter-intuitive: these are individual moves, not pairs)
         self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
 
     '''
@@ -122,22 +122,45 @@ class MoveGenerator:
         legal_moves = list(board.legal_moves)
         global best_move
         best_move = None
-        white_to_move = board.turn == chess.WHITE
-        self.find_mini_max_move(board, legal_moves, self.DEPTH, white_to_move)
+
+        # changed 'white_to_move' to 'maximize'
+        # it doesn't matter whose turn it is, as long as
+        # we get the max of whichever colors turn it is
+        #
+        #   (made for some funny games when I was playing white,
+        #    before I realized that the AI was trying to maximize
+        #    my score instead of its own)
+        maximize = True
+
+        # alpha-beta pruning
+        # (https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode)
+        # Initialize array to hold hold dummy highest and lowest values for pruning
+        alpha_beta = [-10000, 10000]
+
+        self.find_mini_max_move(board, legal_moves, self.DEPTH, maximize, alpha_beta)
         if best_move is None:
             best_move = self.random_move(board)
         return best_move
 
-    def find_mini_max_move(self, board, legal_moves, depth, white_to_move):
+    def find_mini_max_move(self, board, legal_moves, depth, maximize, alpha_beta):
         global best_move
         if depth == 0:
             return self.score_material(board)
-        if white_to_move:
+        if maximize:
             max_score = -self.CHECKMATE
             for move in legal_moves:
                 board.push(move)
                 next_moves = list(board.legal_moves)
-                score = self.find_mini_max_move(board, next_moves, depth - 1, False)
+                score = self.find_mini_max_move(board, next_moves, depth - 1, False, alpha_beta)
+
+                # pruning: quit if any move has a higher score than beta
+                if score >= alpha_beta[1]:
+                    board.pop()
+                    break
+                # pruning: update alpha value
+                if score > alpha_beta[0]:
+                    alpha_beta[0] = score
+
                 if score > max_score:
                     max_score = score
                     if depth == self.DEPTH:
@@ -149,7 +172,16 @@ class MoveGenerator:
             for move in legal_moves:
                 board.push(move)
                 next_moves = list(board.legal_moves)
-                score = self.find_mini_max_move(board, next_moves, depth - 1, True)
+                score = self.find_mini_max_move(board, next_moves, depth - 1, True, alpha_beta)
+
+                # pruning: quit if any move has a lower score than alpha
+                if score <= alpha_beta[0]:
+                    board.pop()
+                    break
+                # pruning: update beta value
+                if score < alpha_beta[1]:
+                    alpha_beta[1] = score
+
                 if score < min_score:
                     min_score = score
                     if depth == self.DEPTH:
@@ -158,6 +190,11 @@ class MoveGenerator:
             return min_score
 
     def score_material(self, board):
+        if board.is_checkmate():
+            return self.CHECKMATE
+        if board.is_stalemate():
+            return self.STALEMATE
+
         chess_board = MakeMatrix().convert_to_matrix(board)
         score = 0
         count_black = 0

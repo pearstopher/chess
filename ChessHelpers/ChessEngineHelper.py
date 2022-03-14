@@ -5,29 +5,7 @@ Contains some utility methods that act as extensions to the chess library
 import chess
 import random
 import pygame  # need to process pygame events to prevent game freeze
-
-
-class MakeMatrix:
-
-    def __init__(self):
-        self.board_mat = []
-
-    def convert_to_matrix(self, board):
-        board_str = board.epd()
-        rows = board_str.split(" ", 1)[0].split("/")
-        for row in rows:
-            board_row = []
-            for cell in row:
-                if cell.isdigit():
-                    for i in range(0, int(cell)):
-                        board_row.append('--')
-                else:
-                    if cell.islower():  # black
-                        board_row.append(("b", cell))
-                    else:  # white
-                        board_row.append(("w", cell.lower()))
-            self.board_mat.append(board_row)
-        return self.board_mat
+from ChessHelpers.ChessHeuristics import Heuristics
 
 
 class MoveGenerator:
@@ -37,6 +15,7 @@ class MoveGenerator:
         self.DEPTH = 6  # (in case it's counter-intuitive: these are individual moves, not pairs)
         self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
         self.QUIT = False
+        self.heuristics = Heuristics()
 
     '''
     Returns a random move from the list of all possible legal moves
@@ -64,7 +43,7 @@ class MoveGenerator:
             elif board.is_stalemate():
                 score = self.STALEMATE
             else:
-                score = turn_multiplier * self.score_material(board)
+                score = turn_multiplier * self.heuristics.score_material(board)
             if score > max_score:
                 max_score = score
                 best_move = player_move
@@ -102,7 +81,7 @@ class MoveGenerator:
                     elif board.is_stalemate():
                         score = self.STALEMATE
                     else:
-                        score = -turn_multiplier * self.score_material(board)
+                        score = -turn_multiplier * self.heuristics.score_material(board)
                     if score > opponent_max_score:
                         opponent_max_score = score
                     board.pop()  # undo the opponent's move
@@ -159,7 +138,7 @@ class MoveGenerator:
 
         global best_move
         if depth == 0:
-            return self.score_material(board)
+            return self.heuristics.score_material(board)
         if maximize:
             max_score = -self.CHECKMATE
             for move in legal_moves:
@@ -203,24 +182,3 @@ class MoveGenerator:
                 board.pop()
             return min_score
 
-    def score_material(self, board):
-        if board.is_checkmate():
-            return self.CHECKMATE
-        if board.is_stalemate():
-            return self.STALEMATE
-
-        chess_board = MakeMatrix().convert_to_matrix(board)
-        score = 0
-        count_black = 0
-        count_white = 0
-        for row in chess_board:
-            for cell in row:
-                color = cell[0]
-                piece_type = cell[1]
-                if color == "w":
-                    count_white += 1
-                    score += self.piece_score[piece_type]
-                elif color == "b":
-                    count_black += 1
-                    score -= self.piece_score[piece_type]
-        return score

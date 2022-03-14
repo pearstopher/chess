@@ -43,7 +43,7 @@ class MoveGenerator:
             elif board.is_stalemate():
                 score = self.STALEMATE
             else:
-                score = turn_multiplier * self.heuristics.score_material(board)
+                score = turn_multiplier * self.heuristics.heuristic_1(board)
             if score > max_score:
                 max_score = score
                 best_move = player_move
@@ -81,7 +81,7 @@ class MoveGenerator:
                     elif board.is_stalemate():
                         score = self.STALEMATE
                     else:
-                        score = -turn_multiplier * self.heuristics.score_material(board)
+                        score = -turn_multiplier * self.heuristics.heuristic_1(board)
                     if score > opponent_max_score:
                         opponent_max_score = score
                     board.pop()  # undo the opponent's move
@@ -138,7 +138,7 @@ class MoveGenerator:
 
         global best_move
         if depth == 0:
-            return self.heuristics.score_material(board)
+            return self.heuristics.heuristic_1(board, maximize)
         if maximize:
             max_score = -self.CHECKMATE
             for move in legal_moves:

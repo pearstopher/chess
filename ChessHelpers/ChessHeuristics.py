@@ -10,13 +10,32 @@ class Heuristics:
         self.STALEMATE = 0
         self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
 
-    # heuristic #1: basic heuristic, scores boards based on piece value
-    def score_material(self, board):
-        if board.is_checkmate():
+    """
+    Heuristic #1
+    
+    scores boards based on piece value set in self.piece_score:
+    
+        1. each piece is worth +points if it is yours, and -points if it is your opponents
+        2. special case for checkmate (+/- 1000 points)
+        3. special case for stalemate (0 points)
+    """
+    def heuristic_1(self, board, opponent=False):
+        # case 1: return +1000 if it is checkmate and we win
+        if board.is_checkmate() and not opponent:
             return self.CHECKMATE
+
+        # case 2: return -1000 if it is checkmate and we lose
+        if board.is_checkmate() and opponent:
+            return -self.CHECKMATE
+
+        # case 3: return 0 if it is a stalemate
         if board.is_stalemate():
             return self.STALEMATE
 
+        # case 4: otherwise return the board score
+        return self.score_material(board)
+
+    def score_material(self, board):
         chess_board = MakeMatrix().convert_to_matrix(board)
         score = 0
         count_black = 0
@@ -33,12 +52,32 @@ class Heuristics:
                     score -= self.piece_score[piece_type]
         return score
 
-    ############################################
-    # additional heuristics (not yet integrated)
-    ############################################
+    """
+    Heuristic #2
 
-    # control_diagonals and control_center
-    # - Mike K https://github.com/fieldsher
+    adds to heuristic #1:
+    
+        1. scores boards based on number of pieces
+        2. scores boards based on control of center squares
+        3. scores boards based on diagonal control/mobility
+        
+    """
+    def heuristic_2(self, board, opponent=False):
+        if board.is_checkmate() and not opponent:
+            return self.CHECKMATE
+        if board.is_checkmate() and opponent:
+            return -self.CHECKMATE
+        if board.is_stalemate():
+            return self.STALEMATE
+
+        # add up the individual 'heuristics' to calculate the final board score
+        score = self.score_material(board)
+        score += self.control_diagonals(board)
+        score += self.control_center(board, "white")
+        return score
+
+    # function to score board based on control of diagonals
+    # Mike K https://github.com/fieldsher
     def control_diagonals(self, board):
         # This procedure determines if diagonals are controlled by bishops or queen
 
@@ -69,6 +108,8 @@ class Heuristics:
 
         return diagonal_heuristics
 
+    # function to score board based on control of center squares
+    # Mike K https://github.com/fieldsher
     def control_center(self, board, side):
         # This procedure will give heuristic points for control of central squares
 

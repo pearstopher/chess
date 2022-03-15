@@ -49,6 +49,9 @@ on the board and on the control of center squares and center diagonals.
 control of the center and diagonals, and on the mobility of the board and the number of
 pieces attacked/defended.
 
+Each of these three heuristics is built from a number of valuable pieces: `score_material`,
+`control_diagonals`, `control_center`, `mobility`, `mobility_advanced`, etc.
+
 # 3. Chess UI
 
 The `/interface/` folder contains a very basic chess UI which uses 

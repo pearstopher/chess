@@ -12,8 +12,10 @@ class MoveGenerator:
     def __init__(self):
         self.CHECKMATE = 1000
         self.STALEMATE = 0
-        self.DEPTH = 6  # (in case it's counter-intuitive: these are individual moves, not pairs)
-        self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
+        # depth:
+        #   in case it's counter-intuitive: these are individual moves, not pairs
+        #   also, add "1" to this because it searches at depth 0
+        self.DEPTH = 4  # for now, 4-5 seems like a good trade-off between looking ahead and taking forever
         self.QUIT = False
         self.heuristics = Heuristics()
 
@@ -43,7 +45,7 @@ class MoveGenerator:
             elif board.is_stalemate():
                 score = self.STALEMATE
             else:
-                score = turn_multiplier * self.heuristics.score_material(board)
+                score = turn_multiplier * self.heuristics.heuristic_1(board)
             if score > max_score:
                 max_score = score
                 best_move = player_move
@@ -134,7 +136,7 @@ class MoveGenerator:
                     elif board.is_stalemate():
                         score = self.STALEMATE
                     else:
-                        score = -turn_multiplier * self.heuristics.score_material(board)
+                        score = -turn_multiplier * self.heuristics.heuristic_1(board)
                     if score > opponent_max_score:
                         opponent_max_score = score
                     board.pop()  # undo the opponent's move
@@ -153,10 +155,8 @@ class MoveGenerator:
     '''
 
     def mini_max_move(self, board):
-        legal_moves = list(board.legal_moves)
-        global best_move
-        best_move = None
 
+        best_move = [None]
         # changed 'white_to_move' to 'maximize'
         # it doesn't matter whose turn it is, as long as
         # we get the max of whichever colors turn it is
@@ -165,21 +165,26 @@ class MoveGenerator:
         #    before I realized that the AI was trying to maximize
         #    my score instead of its own)
         maximize = True
+        # need to know if white or black is playing for max/min
+        white = board.turn == chess.WHITE
 
         # alpha-beta pruning
         # (https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning#Pseudocode)
         # Initialize array to hold hold dummy highest and lowest values for pruning
-        alpha_beta = [-10000, 10000]
+        #
+        # alpha = "minimum score that the maximizing player is assured of"
+        # beta = "maximum score that the minimizing player is assured of"
 
-        self.find_mini_max_move(board, legal_moves, self.DEPTH, maximize, alpha_beta)
+        self.find_mini_max_move(board, self.DEPTH, maximize, white, -10000, 10000, best_move)
         if self.QUIT is True:
             return False
 
-        if best_move is None:
-            best_move = self.random_move(board)
-        return best_move
+        if best_move[0] is None:
+            print("Warning: no best move found.")
+            best_move[0] = self.random_move(board)
+        return best_move[0]
 
-    def find_mini_max_move(self, board, legal_moves, depth, maximize, alpha_beta):
+    def find_mini_max_move(self, board, depth, maximize, white, alpha, beta, best_move):
         # keep processing events while the mini max search is going
         # and allow the user to close the game if a move is in progress
         events = pygame.event.get()
@@ -189,49 +194,72 @@ class MoveGenerator:
         if self.QUIT is True:
             return 0
 
-        global best_move
-        if depth == 0:
-            return self.heuristics.score_material(board)
+        # I also read that you can increase the efficiency of the pruning by ordering the moves
+        #
+        # here I make a new list of legal moves where moves that capture pieces are ordered first
+        unsorted_legal_moves = list(board.legal_moves)
+        legal_moves = []
+        # list the moves that capture a piece first
+        for m in unsorted_legal_moves:
+            if board.piece_at(m.to_square):
+                legal_moves.append(m)
+        for m in unsorted_legal_moves:
+            if not board.piece_at(m.to_square):
+                legal_moves.append(m)
+
+        if depth == 0 or len(legal_moves) == 0:  # check for 'terminal node' as well as max depth
+            score = self.heuristics.heuristic_2(board, white)
+            return score
+
         if maximize:
-            max_score = -self.CHECKMATE
+            max_score = -10000
             for move in legal_moves:
                 board.push(move)
-                next_moves = list(board.legal_moves)
-                score = self.find_mini_max_move(board, next_moves, depth - 1, False, alpha_beta)
-
-                # pruning: quit if any move has a higher score than beta
-                if score >= alpha_beta[1]:
-                    board.pop()
-                    break
-                # pruning: update alpha value
-                if score > alpha_beta[0]:
-                    alpha_beta[0] = score
+                score = self.find_mini_max_move(board, depth - 1, False, white, alpha, beta, best_move)
 
                 if score > max_score:
                     max_score = score
-                    if depth == self.DEPTH:
-                        best_move = move
-                board.pop()
-            return max_score
-        else:
-            min_score = self.CHECKMATE
-            for move in legal_moves:
-                board.push(move)
-                next_moves = list(board.legal_moves)
-                score = self.find_mini_max_move(board, next_moves, depth - 1, True, alpha_beta)
 
-                # pruning: quit if any move has a lower score than alpha
-                if score <= alpha_beta[0]:
+                    # set the best move (I put it in an argument instead of a global var)
+                    if depth == self.DEPTH:
+                        best_move[0] = move
+
+                # pruning
+                # update "minimum guaranteed score"
+                if max_score > alpha:
+                    alpha = max_score
+
+                # pruning
+                # skip if move is better than best move opponent will allow
+                if max_score >= beta:
                     board.pop()
                     break
-                # pruning: update beta value
-                if score < alpha_beta[1]:
-                    alpha_beta[1] = score
+
+                board.pop()
+            return max_score
+
+        else:
+            min_score = 10000
+            for move in legal_moves:
+                board.push(move)
+                score = self.find_mini_max_move(board, depth - 1, True, white, alpha, beta, best_move)
 
                 if score < min_score:
                     min_score = score
-                    if depth == self.DEPTH:
-                        best_move = move
+                    # hehe your best move can't be one of your opponent's moves
+                    # if depth == self.DEPTH:
+                    #    best_move[0] = move
+
+                # pruning: update beta value
+                if min_score < beta:
+                    beta = min_score
+
+                # pruning
+                # skip if worse than the worst score we can be forced to accept
+                if min_score <= alpha:
+                    board.pop()
+                    break
+
                 board.pop()
             return min_score
 

@@ -155,7 +155,7 @@ class MoveGenerator:
                 legal_moves.append(m)
 
         if depth == 0 or len(legal_moves) == 0:  # check for 'terminal node' as well as max depth
-            score = self.heuristics.heuristic_1(board, white)
+            score = self.heuristics.heuristic_2(board, white)
             return score
 
         if maximize:

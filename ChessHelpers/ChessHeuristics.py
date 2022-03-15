@@ -76,23 +76,20 @@ class Heuristics:
         3. scores boards based on diagonal control/mobility
         
     """
-    def heuristic_2(self, board, opponent=False, white=True):
-        if board.is_checkmate() and not opponent:
-            return self.CHECKMATE
-        if board.is_checkmate() and opponent:
-            return -self.CHECKMATE
-        if board.is_stalemate():
-            return self.STALEMATE
+    def heuristic_2(self, board, white):
+        # generate the initial score with heuristic #1
+        score = self.heuristic_1(board, white)
 
-        # add up the individual 'heuristics' to calculate the final board score
-        score = self.score_material(board, )
-        score += self.control_diagonals(board)
-        score += self.control_center(board, "white")
+        # then, complement the score with our additional heuristics!
+        # dividing by some constant because it seems likely that position is
+        #   at least somewhat less valuable than pieces
+        score += self.control_diagonals(board, white) / 5
+        score += self.control_center(board, white) / 4
         return score
 
     # function to score board based on control of diagonals
     # Mike K https://github.com/fieldsher
-    def control_diagonals(self, board):
+    def control_diagonals(self, board, white):
         # This procedure determines if diagonals are controlled by bishops or queen
 
         # Define figures capable of controlling the diagonals
@@ -106,25 +103,27 @@ class Heuristics:
 
         # Define diagonals
         black_diagonal = [chess_board[1][1], chess_board[2][2], chess_board[3][3], chess_board[4][4],
-                          chess_board[5][5], chess_board[6][6], chess_board[7][7], chess_board[8][8]]
+                          chess_board[5][5], chess_board[6][6], chess_board[7][7], chess_board[0][0]]
 
-        white_diagonal = [chess_board[1][8], chess_board[2][7], chess_board[3][6], chess_board[4][5],
-                          chess_board[5][4], chess_board[6][3], chess_board[7][2], chess_board[8][1]]
+        white_diagonal = [chess_board[0][7], chess_board[1][6], chess_board[2][5], chess_board[3][4],
+                          chess_board[4][3], chess_board[5][2], chess_board[6][1], chess_board[7][0]]
 
         for cell in black_diagonal:
             for figure in diagonal_figures:
                 if figure == cell[1]:
-                    diagonal_heuristics += 3
+                    if (cell[0] == "w" and white) or (cell[0] == "b" and not white):
+                        diagonal_heuristics += 3
         for cell in white_diagonal:
             for figure in diagonal_figures:
                 if figure == cell[1]:
-                    diagonal_heuristics += 3
+                    if (cell[0] == "w" and white) or (cell[0] == "b" and not white):
+                        diagonal_heuristics += 3
 
         return diagonal_heuristics
 
     # function to score board based on control of center squares
     # Mike K https://github.com/fieldsher
-    def control_center(self, board, side):
+    def control_center(self, board, white):
         # This procedure will give heuristic points for control of central squares
 
         # Convert board
@@ -159,13 +158,13 @@ class Heuristics:
                 ccHeuristic += 2
 
         # Give points for white pawns in controlling positions
-        if side == "white":
+        if white:
             for square in white_pawn_squares:
                 if square == "p":
                     ccHeuristic += 1
 
         # Give points for black pawns in controlling positions
-        if side == "white":
+        if not white:
             for square in black_pawn_squares:
                 if square == "p":
                     ccHeuristic += 1

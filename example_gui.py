@@ -1,7 +1,5 @@
 # Chess Program
 #
-# This chess program currently responds to the user by making random moves.
-#
 # Basic requirements:
 # > pip install python-chess
 # > pip install pygame
@@ -33,7 +31,7 @@ def main():
     # return value:
     #   the outcome of the game (ignored)
     move_generator = ChessEngineHelper.MoveGenerator()
-    #play_chess(board, black=move_generator.mini_max_move)
+    # play_chess(board, black=move_generator.mini_max_move)
     play_chess(board, black=move_generator.mobility_advanced_best_next_move)
 
 

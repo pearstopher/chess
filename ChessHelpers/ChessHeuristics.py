@@ -123,6 +123,10 @@ class Heuristics:
 
         return ccHeuristic
 
+    # mobility - number of legal moves available to a player after the current move
+    # - Rajashree P https://github.com/fieldsher
+    def mobility(self, board):
+        return board.legal_moves.count()
 
 class MakeMatrix:
 

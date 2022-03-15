@@ -55,6 +55,36 @@ class MoveGenerator:
         return best_move
 
     '''
+        Evaluate all moves from the list of all possible next, legal moves and decide which maximizes your score 
+        based on the total number of legal moves available at the next turn.
+        We make the move in order to evaluate it and later undo it.
+    '''
+
+    def mobility_best_next_move(self, board):
+        legal_moves = list(board.legal_moves)
+        turn_multiplier = 1 if board.turn == chess.WHITE else -1
+        max_score = -self.CHECKMATE
+        best_move = None
+
+        for player_move in legal_moves:
+            board.push(player_move)  # make move
+            if board.is_checkmate():
+                score = self.CHECKMATE
+            elif board.is_stalemate():
+                score = self.STALEMATE
+            else:
+                score = turn_multiplier * self.heuristics.mobility(board)
+            if score > max_score:
+                max_score = score
+                best_move = player_move
+            board.pop()  # undo the move
+
+        if best_move is None:
+            return self.random_move(board)
+
+        return best_move
+
+    '''
     To maximize your score and make the best move, you need to look into the opponent's future best move
     Only looks at the next opponent move
     '''

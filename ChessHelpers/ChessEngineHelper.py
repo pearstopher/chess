@@ -6,6 +6,7 @@ import chess
 import random
 import pygame  # need to process pygame events to prevent game freeze
 from ChessHelpers.ChessHeuristics import Heuristics
+# import timeit  # using to time some moves
 
 
 class MoveGenerator:
@@ -155,6 +156,8 @@ class MoveGenerator:
     '''
 
     def mini_max_move(self, board):
+        # uncomment start/stop and import to time moves
+        # start = timeit.default_timer()
 
         best_move = [None]
         # changed 'white_to_move' to 'maximize'
@@ -182,6 +185,9 @@ class MoveGenerator:
         if best_move[0] is None:
             print("Warning: no best move found.")
             best_move[0] = self.random_move(board)
+
+        # stop = timeit.default_timer()
+        # print('Time: ', stop - start)
         return best_move[0]
 
     def find_mini_max_move(self, board, depth, maximize, white, alpha, beta, best_move):

@@ -84,6 +84,29 @@ class MoveGenerator:
 
         return best_move
 
+    def mobility_advanced_best_next_move(self, board):
+        legal_moves = list(board.legal_moves)
+        max_score = -self.CHECKMATE
+        best_move = None
+
+        for player_move in legal_moves:
+            board.push(player_move)  # make move
+            if board.is_checkmate():
+                score = self.CHECKMATE
+            elif board.is_stalemate():
+                score = self.STALEMATE
+            else:
+                score = self.heuristics.mobility_advanced(board, player_move)
+            if score > max_score:
+                max_score = score
+                best_move = player_move
+            board.pop()  # undo the move
+
+        if best_move is None:
+            return self.random_move(board)
+
+        return best_move
+
     '''
     To maximize your score and make the best move, you need to look into the opponent's future best move
     Only looks at the next opponent move

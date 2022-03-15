@@ -9,6 +9,7 @@ class Heuristics:
         self.CHECKMATE = 1000
         self.STALEMATE = 0
         self.piece_score = {"k": 0, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
+        self.mobility_piece_score = {"k": 4, "q": 10, "r": 5, "b": 3, "n": 3, "p": 1}
 
     # heuristic #1: basic heuristic, scores boards based on piece value
     def score_material(self, board):
@@ -127,6 +128,209 @@ class Heuristics:
     # - Rajashree P https://github.com/fieldsher
     def mobility(self, board):
         return board.legal_moves.count()
+
+    # mobility - number of pieces attacked + number pieces defended
+
+    def get_rook_score_for_mobility_advanced(self, chess_board, row, col):
+        score = 0
+
+        row_index = row + 1
+        col_index = col
+
+        while row_index <= 7:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            row_index += 1
+
+        row_index = row - 1
+
+        while row_index >= 0:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            row_index -= 1
+
+        row_index = row
+        col_index = col + 1
+
+        while col_index <= 7:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            col_index += 1
+
+        col_index = col - 1
+
+        while col_index >= 0:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            col_index -= 1
+
+        return score
+
+    def get_bishop_score_for_mobility_advanced(self, chess_board, row, col):
+        score = 0
+
+        row_index = row + 1
+        col_index = col + 1
+
+        while row_index <= 7 and col_index <= 7:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            row_index += 1
+            col_index += 1
+
+        row_index = row - 1
+        col_index = col - 1
+
+        while row_index >= 0 and col_index >= 0:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            row_index -= 1
+            col_index -= 1
+
+        row_index = row + 1
+        col_index = col - 1
+
+        while row_index <= 7 and col_index >= 0:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            row_index += 1
+            col_index -= 1
+
+        row_index = row - 1
+        col_index = col + 1
+
+        while row_index >= 0 and col_index <= 7:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+                break
+            row_index -= 1
+            col_index += 1
+
+        return score
+
+    def get_score_for_mobility_advanced(self, chess_board, row_index, col_index):
+        score = 0
+
+        if 0 <= row_index <= 7 and 0 <= col_index <= 7:
+            piece_type = chess_board[row_index][col_index][1]
+            if piece_type != "-":
+                score += self.mobility_piece_score[piece_type]
+
+        return score
+
+    def mobility_advanced(self, board, player_move):
+        # Convert board
+        chess_board = MakeMatrix().convert_to_matrix(board)
+
+        score = 0
+
+        to_square = player_move.to_square
+        row = 7 - int(to_square / 8)
+        col = to_square % 8
+        cur_color = chess_board[row][col][0]
+        cur_piece_type = chess_board[row][col][1]
+
+        board.pop()
+        temp_chess_board = MakeMatrix().convert_to_matrix(board)
+        temp_color = temp_chess_board[row][col][0]
+        temp_piece_type = temp_chess_board[row][col][1]
+        if temp_color == "w" and temp_piece_type != "-":
+            score += self.mobility_piece_score[temp_piece_type]
+        board.push(player_move)
+        chess_board = MakeMatrix().convert_to_matrix(board)
+
+        # knight
+        if cur_piece_type == "n":
+            offset = [-2, -1, 1, 2]
+            for row_offset in offset:
+                for col_offset in offset:
+                    if abs(row_offset) + abs(col_offset) == 3:
+                        new_row_pos = row + row_offset
+                        new_col_pos = col + col_offset
+                        if 0 <= new_row_pos <= 7 and 0 <= new_col_pos <= 7:
+                            piece_type = chess_board[new_row_pos][new_col_pos][1]
+                            if piece_type != "-":
+                                score += self.mobility_piece_score[piece_type]
+
+        # queen
+        if cur_piece_type == "q":
+            score += self.get_rook_score_for_mobility_advanced(chess_board, row, col)
+            score += self.get_bishop_score_for_mobility_advanced(chess_board, row, col)
+
+        # rook
+        if cur_piece_type == "r":
+            score += self.get_rook_score_for_mobility_advanced(chess_board, row, col)
+
+        # bishop
+        if cur_piece_type == "b":
+            score += self.get_bishop_score_for_mobility_advanced(chess_board, row, col)
+
+        # pawn
+        if cur_piece_type == "p":
+            row_index = row + 1
+            col_index = col + 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            col_index = col - 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+        # king
+        if cur_piece_type == "k":
+            row_index = row + 1
+            col_index = col + 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            col_index = col - 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            row_index = row - 1
+            col_index = col - 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            col_index = col + 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            row_index = row + 1
+            col_index = col
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            row_index = row - 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            row_index = row
+            col_index = col + 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+            col_index = col - 1
+
+            score += self.get_score_for_mobility_advanced(chess_board, row_index, col_index)
+
+        return score
+
 
 class MakeMatrix:
 

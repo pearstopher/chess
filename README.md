@@ -24,11 +24,16 @@ methods:
 legal moves.
 2. `greedy_next_best_move` uses a heuristic to generate the current best move without
 looking ahead.
-3. `mini_max_easy` uses a heuristic to generate the current best move by looking ahead
+3. `mobility_next_best_move` finds the next best move by maximizing number of legal
+moves available to itself and minimizing the number of legal moves available to the
+opponent.
+4. `mobility_advanced_next_best_move` finds the next best move by maximizing the number
+of pieces which are being attacked and defended.
+5. `mini_max_easy` uses a heuristic to generate the current best move by looking ahead
 to the opponents next move.
-4. `mini_max_move` is our finished Minimax algorithm which can search to any specified
+6. `mini_max_move` is our finished Minimax algorithm which can search to any specified
 depth and which has been modified to utilize Alpha Beta pruning and intelligent move
-ordering.<br><br>
+ordering.
    
 ## 2.2 Heuristics
 
@@ -40,7 +45,9 @@ evalulation heuristics:
 the board.
 2. `heuristic_2` generates a score for a position based on both the value of the pieces
 on the board and on the control of center squares and center diagonals.
-3. `heuristic_3` will be added soon!
+3. `heuristic_3` generates a score for a position based on the value of the pieces, the
+control of the center and diagonals, and on the mobility of the board and the number of
+pieces attacked/defended.
 
 # 3. Chess UI
 

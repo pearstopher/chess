@@ -74,7 +74,7 @@ class Heuristics:
     
         1. scores boards based on number of pieces
         2. scores boards based on control of center squares
-        3. scores boards based on diagonal control/mobility
+        3. scores boards based on diagonal control
         
     """
     def heuristic_2(self, board, white):
@@ -178,8 +178,30 @@ class Heuristics:
 
         return ccHeuristic
 
+    """
+    Heuristic #3
+
+    adds to heuristic #2:
+
+        1. scores boards based on number of pieces
+        2. scores boards based on control of center squares
+        3. scores boards based on diagonal control
+        4. scores boards based on number of legal moves
+        5. scores boards based on piece mobility
+
+    """
+    def heuristic_3(self, board, white, player_move):
+        # generate the initial score with heuristic #2
+        score = self.heuristic_2(board, white)
+
+        # then, complement the score with our additional heuristics again!
+        # can scale these down too: average ~30 available moves
+        score += self.mobility(board, white) / 30
+        score += self.mobility_advanced(board, white, player_move) / 10
+        return score
+
     # mobility - number of legal moves available to a player after the current move
-    # - Rajashree P https://github.com/fieldsher
+    # - Rajashree P
     def mobility(self, board):
         return board.legal_moves.count()
 

@@ -1,7 +1,5 @@
 # Chess Program
 #
-# This chess program currently responds to the user by making random moves.
-#
 # Basic requirements:
 # > pip install python-chess
 # > pip install pygame

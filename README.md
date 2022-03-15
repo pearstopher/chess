@@ -1,4 +1,4 @@
-# 0. Requirements
+# 1. Requirements
 
 In order to run our program, the following libraries must be installed:
 
@@ -8,12 +8,12 @@ In order to run our program, the following libraries must be installed:
  ````
 
 
-# 1. Chess AI
+# 2. Chess AI
 
 The methods which make up our Chess AI are  located in the `/ChessHelpers/` 
 directory:
 
-## 1.1 Move Generation
+## 2.1 Move Generation
 
 We have defined a "move generator" simply as any function which accepts a `chess.Board` 
 and returns a `chess.Move`. The goal of this project then is to use AI to create an 
@@ -30,7 +30,7 @@ to the opponents next move.
 depth and which has been modified to utilize Alpha Beta pruning and intelligent move
 ordering.<br><br>
    
-## 1.2 Heuristics
+## 2.2 Heuristics
 
 All of our move generation methods (except `random_move`) require the use of a heuristic
 to score leaf nodes or board positions. The file `ChessHeuristics.py` contains our board 
@@ -42,14 +42,14 @@ the board.
 on the board and on the control of center squares and center diagonals.
 3. `heuristic_3` will be added soon!
 
-# 2. Chess UI
+# 3. Chess UI
 
 The `/interface/` folder contains a very basic chess UI which uses 
 [Python Chess](https://python-chess.readthedocs.io/en/latest/) and
 [Pygame](https://www.pygame.org/docs/) to implement a working chess board.
 
 
-## 2.1 Game Initialization
+## 3.1 Game Initialization
 
 To play a game, you just need to call the `play_chess()` function. It accepts a chess board and
 two optional arguments, `white` and `black` with which you can pass any move generation function.
@@ -73,7 +73,7 @@ play_chess(board, white=move_generation_function_a, black=move_generation_functi
 ```
 
 
-## 2.2 Graphical User Interface
+## 3.2 Graphical User Interface
 
 I learned enough about *pygame* to make a basic chess interface which can interact with our chess library.
 You can run `example_gui.py` to see the graphical interface in action.
@@ -87,7 +87,7 @@ You can run `example_gui.py` to see the graphical interface in action.
 ![Fool's Mate](interface/images/scholars_mate.png)
 
 
-## 2.3 Terminal User Interface
+## 3.3 Terminal User Interface
 
 The graphical interface is useful for human play, but the terminal interface is much more convenient
 for self-play, when the AI wants to play against itself, maybe many times in rapid succession.

@@ -3,6 +3,9 @@
 # This file contains the chess heuristics which we have designed
 # and which are used to score our chess positions in ChessEngineHelper.py
 
+import chess
+global best_move
+
 
 class Heuristics:
     def __init__(self):
@@ -19,13 +22,15 @@ class Heuristics:
         2. special case for checkmate (+/- 1000 points)
         3. special case for stalemate (0 points)
     """
-    def heuristic_1(self, board, opponent=False):
+    def heuristic_1(self, board, white):
         # case 1: return +1000 if it is checkmate and we win
-        if board.is_checkmate() and not opponent:
+        if board.is_checkmate() and (white and board.turn == chess.BLACK or
+                                     not white and board.turn == chess.WHITE):
             return self.CHECKMATE
 
         # case 2: return -1000 if it is checkmate and we lose
-        if board.is_checkmate() and opponent:
+        if board.is_checkmate() and (not white and board.turn == chess.BLACK or
+                                     white and board.turn == chess.WHITE):
             return -self.CHECKMATE
 
         # case 3: return 0 if it is a stalemate
@@ -33,9 +38,9 @@ class Heuristics:
             return self.STALEMATE
 
         # case 4: otherwise return the board score
-        return self.score_material(board)
+        return self.score_material(board, white)
 
-    def score_material(self, board):
+    def score_material(self, board, white):
         chess_board = MakeMatrix().convert_to_matrix(board)
         score = 0
         count_black = 0
@@ -50,6 +55,15 @@ class Heuristics:
                 elif color == "b":
                     count_black += 1
                     score -= self.piece_score[piece_type]
+
+        # since we calculated the score for white,
+        # simply invert the score if we are playing black
+        # (otherwise the AI will always maximize white's position)
+        # if (my_turn and board.turn == chess.BLACK) \
+        #        or (not my_turn and board.turn == chess.WHITE):
+        #    score = -score
+        if white is False:
+            score = -score
         return score
 
     """
@@ -62,7 +76,7 @@ class Heuristics:
         3. scores boards based on diagonal control/mobility
         
     """
-    def heuristic_2(self, board, opponent=False):
+    def heuristic_2(self, board, opponent=False, white=True):
         if board.is_checkmate() and not opponent:
             return self.CHECKMATE
         if board.is_checkmate() and opponent:
@@ -71,7 +85,7 @@ class Heuristics:
             return self.STALEMATE
 
         # add up the individual 'heuristics' to calculate the final board score
-        score = self.score_material(board)
+        score = self.score_material(board, )
         score += self.control_diagonals(board)
         score += self.control_center(board, "white")
         return score

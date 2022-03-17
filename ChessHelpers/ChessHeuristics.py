@@ -157,6 +157,14 @@ class Heuristics:
                 ccHeuristic += 1
             elif square[1] == "n":
                 ccHeuristic += 2
+            elif square[1] == "b":
+                ccHeuristic += 2
+            elif square[1] == "r":
+                ccHeuristic += 2
+            elif square[1] == "q":
+                ccHeuristic += 3
+            elif square[1] == "k":
+                ccHeuristic += 2
 
         # Give points for white pawns in controlling positions
         if white:

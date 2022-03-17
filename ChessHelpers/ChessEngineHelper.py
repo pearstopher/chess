@@ -193,12 +193,17 @@ class MoveGenerator:
     def find_mini_max_move(self, board, depth, maximize, white, alpha, beta, best_move):
         # keep processing events while the mini max search is going
         # and allow the user to close the game if a move is in progress
-        events = pygame.event.get()
-        for e in events:
-            if e.type == pygame.QUIT:
-                self.QUIT = True
-        if self.QUIT is True:
-            return 0
+        try:
+            events = pygame.event.get()
+            for e in events:
+                if e.type == pygame.QUIT:
+                    self.QUIT = True
+            if self.QUIT is True:
+                return 0
+        except Exception:
+            # (if game is being run in terminal, there is no pygame)
+            pass
+
 
         # I also read that you can increase the efficiency of the pruning by ordering the moves
         #

@@ -15,7 +15,6 @@ class MoveGenerator:
         self.STALEMATE = 0
         # depth:
         #   in case it's counter-intuitive: these are individual moves, not pairs
-        #   also, add "1" to this because it searches at depth 0
         self.DEPTH = 4  # for now, 4-5 seems like a good trade-off between looking ahead and taking forever
         self.QUIT = False
         self.heuristics = Heuristics()
@@ -34,6 +33,7 @@ class MoveGenerator:
     '''
 
     def greedy_best_next_move(self, board):
+        white = board.turn == chess.WHITE
         legal_moves = list(board.legal_moves)
         turn_multiplier = 1 if board.turn == chess.WHITE else -1
         max_score = -self.CHECKMATE
@@ -46,7 +46,7 @@ class MoveGenerator:
             elif board.is_stalemate():
                 score = self.STALEMATE
             else:
-                score = turn_multiplier * self.heuristics.heuristic_1(board)
+                score = turn_multiplier * self.heuristics.heuristic_1(board, white)
             if score > max_score:
                 max_score = score
                 best_move = player_move

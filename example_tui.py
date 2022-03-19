@@ -36,12 +36,15 @@ def main():
         #
         # return value:
         #   the outcome of the game
+        #
+        # If you run this file as-is, our random move generator (white)
+        #   will play ten games against our greedy next best move algorithm (black)
         move_generator = ChessEngineHelper.MoveGenerator()
         outcome = play_chess(board, white=move_generator.random_move,
                              black=move_generator.greedy_best_next_move)
         outcomes.append(outcome)
 
-    # display all the results
+    # display all the game results
     print("\n\nResults:")
     for o in outcomes:
         print(o)

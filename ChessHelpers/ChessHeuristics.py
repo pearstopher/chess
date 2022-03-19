@@ -437,5 +437,3 @@ class MakeMatrix:
                         board_row.append(("w", cell.lower()))
             self.board_mat.append(board_row)
         return self.board_mat
-
-

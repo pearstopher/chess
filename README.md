@@ -39,7 +39,7 @@ ordering.
 
 All of our move generation methods (except `random_move`) require the use of a heuristic
 to score leaf nodes or board positions. The file `ChessHeuristics.py` contains our board 
-evalulation heuristics:
+evaluation heuristics:
 
 1. `heuristic_1` generates a score for a position based on the value of the pieces on
 the board.
